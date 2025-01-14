@@ -40,4 +40,11 @@ public class Expense {
         this.storeName = storeName;
         this.imagePath = imagePath;
     }
+
+    public void update(Expense updateExpense) {
+        this.category = updateExpense.category;
+        this.amount = updateExpense.amount;
+        this.storeName = updateExpense.storeName;
+        this.description = updateExpense.description;
+    }
 }

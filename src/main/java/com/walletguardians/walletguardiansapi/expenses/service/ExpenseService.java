@@ -1,6 +1,7 @@
 package com.walletguardians.walletguardiansapi.expenses.service;
 
 import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.expenses.controller.dto.response.ExpenseResponse;
 import com.walletguardians.walletguardiansapi.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
@@ -33,5 +34,12 @@ public class ExpenseService {
             }
         }
         return expenseResponses;
+    }
+
+    public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest) {
+        Expense updateExpense = updateExpenseRequest.toEntity();
+        Expense findExpense = expenseRepository.findById(id)
+                .orElseThrow(() ->new IllegalArgumentException("Expense not found"));
+        findExpense.update(updateExpense);
     }
 }

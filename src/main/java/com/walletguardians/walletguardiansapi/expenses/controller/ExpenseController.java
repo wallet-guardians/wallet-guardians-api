@@ -1,6 +1,7 @@
 package com.walletguardians.walletguardiansapi.expenses.controller;
 
 import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.expenses.service.ExpenseService;
 import com.walletguardians.walletguardiansapi.expenses.controller.dto.response.ExpenseResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,10 @@ public class ExpenseController {
     @GetMapping("/{date}")
     public List<ExpenseResponse> getMember(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         return expenseService.getExpenses(date);
+    }
+
+    @PutMapping("/{id}")
+    public void updateExpense(@PathVariable Long id, @RequestBody UpdateExpenseRequest updateExpenseRequest) {
+        expenseService.updateExpense(id, updateExpenseRequest);
     }
 }
