@@ -42,4 +42,8 @@ public class ExpenseService {
                 .orElseThrow(() ->new IllegalArgumentException("Expense not found"));
         findExpense.update(updateExpense);
     }
+
+    public void deleteExpense(Long id) {
+        expenseRepository.deleteById(id);
+    }
 }
