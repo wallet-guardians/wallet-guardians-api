@@ -18,4 +18,9 @@ public class ExpenseController {
     public void createExpense(@RequestBody CreateExpenseRequest createExpenseRequest, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         expenseService.createExpense(date, createExpenseRequest);
     }
+
+    @GetMapping("/{date}")
+    public List<ExpenseResponse> getMember(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return expenseService.getExpenses(date);
+    }
 }
