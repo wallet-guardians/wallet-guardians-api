@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.category.controller;
 
+import com.walletguardians.walletguardiansapi.category.controller.dto.response.CategoryResponse;
 import com.walletguardians.walletguardiansapi.category.entity.Category;
 import com.walletguardians.walletguardiansapi.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,7 @@ public class CategoryController {
     // 클라이언트에게 카테고리에 대한 정보를 주기 위한
     // 카테고리 조회 API
     @GetMapping()
-    public List<Category> getCategories() {
-        List<Category> categories = new ArrayList<>();
+    public List<CategoryResponse> getCategories() {
         return categoryService.getCategories();
     }
 
