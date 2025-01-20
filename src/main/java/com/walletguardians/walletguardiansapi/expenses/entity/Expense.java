@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.expenses.entity;
 
+import com.walletguardians.walletguardiansapi.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,14 +25,16 @@ public class Expense {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY) // 카테고리가 항상 사용되는 것은 아니고, 즉시로딩은 문제가 많으므로 FetchType을 Lazy로 설정
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private String storeName;
 
     private String imagePath;
 
     @Builder
-    private Expense(Long id, int amount, String description, Date date, String category, String storeName, String imagePath) {
+    private Expense(Long id, int amount, String description, Date date, Category category, String storeName, String imagePath) {
         this.id = id;
         this.amount = amount;
         this.description = description;
