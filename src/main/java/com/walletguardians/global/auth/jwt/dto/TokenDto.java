@@ -1,18 +1,15 @@
 package com.walletguardians.global.auth.jwt.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class TokenDto {
 
   private String accessToken;
   private String refreshToken;
-
-  public TokenDto(String accessToken, String refreshToken) {
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
-  }
 
 }
