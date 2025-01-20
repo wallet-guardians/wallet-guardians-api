@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.expenses.controller.dto.request;
 
+import com.walletguardians.walletguardiansapi.category.entity.Category;
 import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,7 @@ public class CreateExpenseRequest {
 
     private int amount;
 
-    private String category;
+    private Category category;
 
     private String description;
 
