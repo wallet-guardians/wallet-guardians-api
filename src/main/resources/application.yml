@@ -1,15 +1,12 @@
-server:
-  port: 8080
 
 spring:
   application:
     name: wallet-guardians-api
 
   datasource:
-    url: jdbc:mysql://localhost:3306/jpa
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: mysql
+    url: jdbc:tc:mysql:8.0.36:///mydatabase
+    username: myuser
+    password: secret
 
   jpa:
     open-in-view: true
