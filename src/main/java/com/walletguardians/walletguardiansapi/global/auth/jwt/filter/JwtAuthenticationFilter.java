@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   public static final String NO_CHECK_URL_LOGIN = "/api/auth/login";
-  public static final String NO_CHECK_URL_SIGN_UP = "/api/auth/register";
+  public static final String NO_CHECK_URL_SIGN_UP = "/api/auth/sign-up";
 
   private final JwtService jwtService;
 
