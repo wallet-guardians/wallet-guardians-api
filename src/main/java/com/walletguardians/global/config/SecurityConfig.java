@@ -52,9 +52,6 @@ public class SecurityConfig {
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auths/login")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auths/register")).permitAll()
             .anyRequest().authenticated())
-//        .logout(logout -> logout
-//            .logoutSuccessUrl("/auths/login")
-//            .invalidateHttpSession(true))
         // jwtFilter 후 UsernamePasswordAuthenticationFilter 인증 처리
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
