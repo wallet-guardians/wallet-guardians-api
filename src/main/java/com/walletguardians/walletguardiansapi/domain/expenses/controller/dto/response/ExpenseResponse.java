@@ -1,7 +1,7 @@
-package com.walletguardians.walletguardiansapi.expenses.controller.dto.response;
+package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response;
 
-import com.walletguardians.walletguardiansapi.category.entity.Category;
-import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import lombok.Builder;
 
 public class ExpenseResponse {

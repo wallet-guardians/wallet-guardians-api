@@ -1,6 +1,6 @@
-package com.walletguardians.walletguardiansapi.category.controller.dto.response;
+package com.walletguardians.walletguardiansapi.domain.category.controller.dto.response;
 
-import com.walletguardians.walletguardiansapi.category.entity.Category;
+import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import lombok.Builder;
 import lombok.Getter;
 

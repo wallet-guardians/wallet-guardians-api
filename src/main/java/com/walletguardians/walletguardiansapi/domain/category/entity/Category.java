@@ -1,6 +1,6 @@
-package com.walletguardians.walletguardiansapi.category.entity;
+package com.walletguardians.walletguardiansapi.domain.category.entity;
 
-import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

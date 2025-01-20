@@ -1,10 +1,10 @@
-package com.walletguardians.walletguardiansapi.expenses.service;
+package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.CreateExpenseRequest;
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.UpdateExpenseRequest;
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.response.ExpenseResponse;
-import com.walletguardians.walletguardiansapi.expenses.repository.ExpenseRepository;
-import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
+import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

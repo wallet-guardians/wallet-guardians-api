@@ -1,8 +1,8 @@
-package com.walletguardians.walletguardiansapi.category.service;
+package com.walletguardians.walletguardiansapi.domain.category.service;
 
-import com.walletguardians.walletguardiansapi.category.controller.dto.response.CategoryResponse;
-import com.walletguardians.walletguardiansapi.category.entity.Category;
-import com.walletguardians.walletguardiansapi.category.repository.CategoryRepository;
+import com.walletguardians.walletguardiansapi.domain.category.controller.dto.response.CategoryResponse;
+import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
+import com.walletguardians.walletguardiansapi.domain.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package com.walletguardians.walletguardiansapi.expenses.repository;
+package com.walletguardians.walletguardiansapi.domain.expenses.repository;
 
-import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
