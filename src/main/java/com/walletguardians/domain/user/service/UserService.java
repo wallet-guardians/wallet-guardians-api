@@ -14,7 +14,7 @@ public class UserService {
 
   public User findByUserId(Long userId) {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("ㅎ당하는 회원 정보가 없습니다."));
+        .orElseThrow(() -> new IllegalArgumentException("해당하는 회원 정보가 없습니다."));
   }
 
   @Transactional(readOnly = true)
