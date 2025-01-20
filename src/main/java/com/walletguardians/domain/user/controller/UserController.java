@@ -20,15 +20,10 @@ public class UserController {
   private final UserService userService;
 
   @GetMapping("/{userId}")
-  public ResponseEntity<User> getUserInfo(@PathVariable("userId") Long userId){
+  public ResponseEntity<User> getUserInfo(@PathVariable("userId") Long userId) {
     log.info(String.valueOf(userId));
     User user = userService.findByUserId(userId);
     return ResponseEntity.ok().body(user);
-  }
-
-  @GetMapping()
-  public ResponseEntity<List<User>> getUsers() {
-    return null;
   }
 
 }
