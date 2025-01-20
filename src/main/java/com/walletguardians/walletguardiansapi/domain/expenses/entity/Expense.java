@@ -1,6 +1,6 @@
-package com.walletguardians.walletguardiansapi.expenses.entity;
+package com.walletguardians.walletguardiansapi.domain.expenses.entity;
 
-import com.walletguardians.walletguardiansapi.category.entity.Category;
+import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,7 +1,7 @@
-package com.walletguardians.walletguardiansapi.expenses.controller.dto.request;
+package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request;
 
-import com.walletguardians.walletguardiansapi.category.entity.Category;
-import com.walletguardians.walletguardiansapi.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

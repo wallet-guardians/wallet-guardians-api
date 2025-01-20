@@ -1,9 +1,9 @@
-package com.walletguardians.walletguardiansapi.expenses.controller;
+package com.walletguardians.walletguardiansapi.domain.expenses.controller;
 
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.CreateExpenseRequest;
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.request.UpdateExpenseRequest;
-import com.walletguardians.walletguardiansapi.expenses.service.ExpenseService;
-import com.walletguardians.walletguardiansapi.expenses.controller.dto.response.ExpenseResponse;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.ExpenseService;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
