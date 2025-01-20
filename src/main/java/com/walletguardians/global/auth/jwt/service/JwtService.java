@@ -66,7 +66,7 @@ public class JwtService {
     Authentication authentication = authenticationManagerBuilder.getObject()
         .authenticate(authenticationToken);
     TokenDto tokenDto = createAllToken(authentication);
-    saveRefreshTokenToRedis(authentication.getName(), tokenDto.getRefreshToken());
+    saveRefreshTokenToRepo(authentication.getName(), tokenDto.getRefreshToken());
 
     return tokenDto;
   }
@@ -150,7 +150,7 @@ public class JwtService {
         .compact();
   }
 
-  private void saveRefreshTokenToRedis(String email, String refreshToken) {
+  private void saveRefreshTokenToRepo(String email, String refreshToken) {
     RefreshToken refreshTokenEntity = new RefreshToken(email, refreshToken);
     refreshTokenRepository.save(refreshTokenEntity);
   }
