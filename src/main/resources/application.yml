@@ -19,6 +19,10 @@ spring:
         project-id: lively-marking-448507-f6
         bucket: wallet_guardians_bucket
   datasource:
+    url: jdbc:mysql://localhost:3306/jpa
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: mysql
     url: jdbc:mysql://34.58.4.225:3306/wallet_guardians?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
@@ -26,6 +30,8 @@ spring:
 
   jpa:
     hibernate:
+      ddl-auto: update
+    show-sql: true
       ddl-auto: update
     properties:
       hibernate:
