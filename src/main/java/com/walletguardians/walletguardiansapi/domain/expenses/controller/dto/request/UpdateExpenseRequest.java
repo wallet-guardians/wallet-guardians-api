@@ -1,11 +1,10 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 
 public class UpdateExpenseRequest {
 
-    private Category category;
+    private String category;
     private int amount;
     private String storeName;
     private String description;
