@@ -22,11 +22,6 @@ spring:
         format_sql: true
         show_sql: true
 
-naver:
-  service:
-    url: https://07jhjkvicl.apigw.ntruss.com/custom/v1/37958/98581d51a01cd124641c136d869387b4af57111d6eb93a518e133fc5165eece1/general
-    secretKey: WGZYR051Z3NsTlVmb3hBUlZHSERMTlVlVlJJcXhSWUM=
-
   docker:
     compose:
       file: compose.yaml
