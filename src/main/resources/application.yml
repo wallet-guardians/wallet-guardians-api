@@ -1,12 +1,16 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
 spring:
   application:
     name: wallet-guardians-api
 
   datasource:
-    url: jdbc:mysql://localhost:3306/jpa
+    url: jdbc:mysql://34.58.4.225:3306/wallet_guardians?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: mysql
+    password: root
 
   jpa:
     open-in-view: true
@@ -17,6 +21,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
+naver:
+  service:
+    url: https://07jhjkvicl.apigw.ntruss.com/custom/v1/37958/98581d51a01cd124641c136d869387b4af57111d6eb93a518e133fc5165eece1/general
+    secretKey: WGZYR051Z3NsTlVmb3hBUlZHSERMTlVlVlJJcXhSWUM=
 
   docker:
     compose:
