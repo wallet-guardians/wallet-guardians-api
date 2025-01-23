@@ -155,4 +155,8 @@ public class JwtService {
     refreshTokenRepository.save(refreshTokenEntity);
   }
 
+  public void deleteRefreshToken(String email) {
+    refreshTokenRepository.deleteByUserEmail(email);
+  }
+
 }
