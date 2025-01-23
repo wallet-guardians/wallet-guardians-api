@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 0.0.0.0
 
 spring:
   application:
@@ -13,10 +14,10 @@ spring:
         project-id: lively-marking-448507-f6
         bucket: wallet_guardians_bucket
   datasource:
-    url: jdbc:mysql://localhost:3306/jpa
+    url: jdbc:mysql://34.58.4.225:3306/wallet_guardians?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: mysql
+    password: root
 
   jpa:
     hibernate:
@@ -36,5 +37,11 @@ spring:
     compose:
       file: compose.yaml
       enabled: false
+      lifecycle-management: none
+      start:
+        command: up
+      stop:
+        command: down
+        timeout: 1m
 jwt:
   secret-Key: 2c1aa3edcdb77bfdb894e80077541102e572ffe15907f0c20053be1611c29f6c71bf54e9fb366849c4babd9cc50681e6e3170dd390a45d947bacd6f46c4478c2
