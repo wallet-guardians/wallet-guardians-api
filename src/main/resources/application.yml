@@ -1,40 +1,23 @@
+server:
+  port: 8080
 
 spring:
   application:
     name: wallet-guardians-api
 
   datasource:
-    url: jdbc:tc:mysql:8.0.36:///mydatabase
-    username: myuser
-    password: secret
+    url: jdbc:mysql://localhost:3306/jpa
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: mysql
 
   jpa:
-    open-in-view: true
     hibernate:
-      ddl-auto: create
-    show-sql: true
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
         show_sql: true
 
-  docker:
-    compose:
-      file: compose.yaml
-      enabled: true
-      lifecycle-management: none
-      start:
-        command: up
-      stop:
-        command: down
-        timeout: 1m
-
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql: trace
 jwt:
   secret-Key: 2c1aa3edcdb77bfdb894e80077541102e572ffe15907f0c20053be1611c29f6c71bf54e9fb366849c4babd9cc50681e6e3170dd390a45d947bacd6f46c4478c2
