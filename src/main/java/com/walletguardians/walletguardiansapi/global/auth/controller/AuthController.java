@@ -4,6 +4,8 @@ import com.walletguardians.walletguardiansapi.domain.user.dto.request.UserLoginR
 import com.walletguardians.walletguardiansapi.domain.user.dto.request.UserRegisterRequest;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
 import com.walletguardians.walletguardiansapi.global.auth.service.AuthService;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final AuthService authService;
+  private final BaseResponseService baseResponseService;
 
   @PostMapping("/sign-up")
   public ResponseEntity<String> register(@RequestBody UserRegisterRequest userRegisterRequest) {
@@ -25,8 +28,8 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<TokenDto> login(@RequestBody UserLoginRegister userLoginRegister) {
-    return ResponseEntity.ok().body(authService.login(userLoginRegister));
+  public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserLoginRegister userLoginRegister) {
+    TokenDto tokenDto = authService.login(userLoginRegister);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(tokenDto));
   }
-
 }
