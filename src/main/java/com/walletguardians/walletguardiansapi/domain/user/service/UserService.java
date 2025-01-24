@@ -12,11 +12,13 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  //포스트맨 id 값 없을 때
   public User findByUserId(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new IllegalArgumentException("해당하는 회원 정보가 없습니다."));
   }
 
+  //로그인 기능일 때
   @Transactional(readOnly = true)
   public User findUserByEmail(String email) {
     return userRepository.findByEmail(email)
