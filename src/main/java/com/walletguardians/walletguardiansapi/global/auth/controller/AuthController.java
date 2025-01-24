@@ -2,15 +2,12 @@ package com.walletguardians.walletguardiansapi.global.auth.controller;
 
 import com.walletguardians.walletguardiansapi.domain.user.dto.request.UserLoginRegister;
 import com.walletguardians.walletguardiansapi.domain.user.dto.request.UserRegisterRequest;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
-import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.auth.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,27 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-  private final JwtService jwtService;
   private final AuthService authService;
+  private final BaseResponseService baseResponseService;
 
-  @PostMapping("/signup")
-  public ResponseEntity<String> signUp(@RequestBody UserRegisterRequest userRegisterRequest) {
-    authService.signUpUser(userRegisterRequest);
+  @PostMapping("/sign-up")
+  public ResponseEntity<String> register(@RequestBody UserRegisterRequest userRegisterRequest) {
+    authService.registerUser(userRegisterRequest);
     return ResponseEntity.ok().body("성공적으로 회원등록이 완료되었습니다.");
   }
 
   @PostMapping("/login")
-  public ResponseEntity<TokenDto> login(@RequestBody UserLoginRegister userLoginRegister) {
-    return ResponseEntity.ok().body(authService.login(userLoginRegister));
+  public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserLoginRegister userLoginRegister) {
+    TokenDto tokenDto = authService.login(userLoginRegister);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(tokenDto));
   }
-
-  @DeleteMapping("/logout")
-  public ResponseEntity<String> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-      HttpServletRequest request) {
-    String accessToken = jwtService.extractAccessToken(request)
-        .filter(jwtService::validateToken)
-        .orElse(null);
-    return authService.logout(accessToken, customUserDetails.getUsername()); //username = email
-  }
-
 }
