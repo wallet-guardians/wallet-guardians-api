@@ -7,7 +7,9 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.res
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Date;
 
@@ -39,5 +41,11 @@ public class ExpenseController {
     @DeleteMapping("/{id}")
     public void deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
+    }
+
+    // 영수증 저장 API
+    @PostMapping("/receipt/{date}")
+    public String saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, @RequestPart MultipartFile receiptFile) throws IOException {
+        return expenseService.createReceiptExpense(receiptFile);
     }
 }
