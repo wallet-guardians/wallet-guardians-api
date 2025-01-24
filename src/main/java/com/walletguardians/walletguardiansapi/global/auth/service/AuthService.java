@@ -37,7 +37,7 @@ public class AuthService {
     User user = userService.findUserByEmail(userLoginRegister.getEmail());
 
     if (!user.isPasswordValid(passwordEncoder, userLoginRegister.getPassword())) {
-      throw new BaseException(BaseResponseStatus.INVALID_PASSWORD);
+      throw new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID);
     }
 
     return jwtService.signIn(userLoginRegister.getEmail(), userLoginRegister.getPassword());

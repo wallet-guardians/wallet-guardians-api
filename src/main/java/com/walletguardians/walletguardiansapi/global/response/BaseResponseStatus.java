@@ -9,9 +9,7 @@ public enum BaseResponseStatus {
 
     NOT_FOUND_MEMBER_ID(false, 2001, "해당하는 회원 정보가 없습니다."),
 
-    INVALID_PASSWORD(false, 2002, "해당하는 비밀번호가 없습니다."),
-
-    INVALID_EMAIL(false, 2003, "해당하는 이메일 정보가 없습니다."),
+    INVALID_EMAIL(false, 2002, "해당하는 이메일 정보가 없습니다."),
 
     /**
     * Calendar
