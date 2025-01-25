@@ -1,10 +1,8 @@
-package com.walletguardians.walletguardiansapi.global.response;
+package com.walletguardians.walletguardiansapi.global.exception;
 
-import lombok.AllArgsConstructor;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-//401에러, 404에러 등등 자주 쓰이는 에러에 대한 exception처리도 등록해놓자
 
 @Data
 @NoArgsConstructor

@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BaseResponse<T> {
 
-    private boolean isSuccess; // 성공, 실패 여부
-    private String message; // 메시지
-    private int code; // 코드
-    private T data; // 전달 데이터
+    private boolean isSuccess;
+    private String message;
+    private int code;
+    private T data;
 
     @Builder
     public BaseResponse(boolean isSuccess, String message, int code, T data) {

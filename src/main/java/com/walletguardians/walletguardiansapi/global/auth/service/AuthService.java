@@ -7,11 +7,10 @@ import com.walletguardians.walletguardiansapi.domain.user.repository.UserReposit
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
-import com.walletguardians.walletguardiansapi.global.response.BaseException;
+import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

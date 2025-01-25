@@ -22,9 +22,9 @@ public class AuthController {
   private final BaseResponseService baseResponseService;
 
   @PostMapping("/sign-up")
-  public ResponseEntity<String> register(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public ResponseEntity<BaseResponse<Void>> register(@RequestBody UserRegisterRequest userRegisterRequest) {
     authService.registerUser(userRegisterRequest);
-    return ResponseEntity.ok().body("성공적으로 회원등록이 완료되었습니다.");
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
   @PostMapping("/login")
