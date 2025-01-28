@@ -1,6 +1,7 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.ExpenseService;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
@@ -45,7 +46,11 @@ public class ExpenseController {
 
     // 영수증 저장 API
     @PostMapping("/receipt/{date}")
-    public String saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, @RequestPart MultipartFile receiptFile) throws IOException {
-        return expenseService.createReceiptExpense(receiptFile);
+    public void saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+                         @RequestPart(value = "file") MultipartFile file,
+                         @RequestPart(value = "info") CreateReceiptRequest dto) throws IOException {
+        expenseService.createReceiptExpense(file, dto);
     }
+
+
 }
