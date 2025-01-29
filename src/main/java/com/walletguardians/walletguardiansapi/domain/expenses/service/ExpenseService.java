@@ -1,18 +1,26 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
+import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
-import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptDTO;
+
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,9 +32,10 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
 
-    // 파일 저장할 위치
-    @Value(value = "${spring.file.dir}")
-    private String fileDir;
+    private final Storage storage;
+    // GCS 버킷 이름
+    @Value("${spring.cloud.gcp.storage.bucket}")
+    private String bucketName;
 
     // 지출 생성
     public void createExpense(Date date, CreateExpenseRequest createExpenseRequest) {
@@ -60,32 +69,25 @@ public class ExpenseService {
         expenseRepository.deleteById(id);
     }
 
-    // 로컬에 파일 저장
-    public String createReceiptExpense(MultipartFile receiptFile) {
+    // 스토리지에 파일 업로드
+    public void uploadReceipt (MultipartFile receiptFile, CreateReceiptRequest dto) {
         if (receiptFile.isEmpty()) {
-            return "파일이 없습니다.";
+             throw new IllegalArgumentException("receipt file is empty");
         }
+        String uniqueFileName = UUID.randomUUID().toString() + "_" + receiptFile.getOriginalFilename();
+        String ext = receiptFile.getContentType();
 
-        String fullPath = "";
-        try {
-            // 파일 저장 경로 설정
-            String fileDir = "C:/Users/ahyeu/Documents/images"; // 경로 지정
-            File directory = new File(fileDir);
-            // 디렉토리가 없으면 생성
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            // 고유한 파일 이름 생성
-            String uniqueFileName = UUID.randomUUID().toString() + "_" + receiptFile.getOriginalFilename();
-            fullPath = fileDir + "/" + uniqueFileName;
-            // 파일 저장
-            receiptFile.transferTo(new File(fullPath));
-        } catch (IOException e) {
+        BlobId blobId = BlobId.of(bucketName, uniqueFileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                .setContentType(ext).build();
+
+        try (WriteChannel writer = storage.writer(blobInfo)) {
+            byte[] imageData = receiptFile.getBytes();
+            writer.write(ByteBuffer.wrap(imageData));
+        } catch (Exception e) {
             e.printStackTrace();
-            return "파일 저장 실패: " + e.getMessage();
         }
-
-        return "파일 저장 성공: " + fullPath;
+        System.out.println(dto.toString());
     }
 
 }

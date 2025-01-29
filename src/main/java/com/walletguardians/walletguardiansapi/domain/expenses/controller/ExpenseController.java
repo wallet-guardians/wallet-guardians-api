@@ -44,12 +44,13 @@ public class ExpenseController {
         expenseService.deleteExpense(id);
     }
 
-    // 영수증 저장 API
+    // 영수증 지출 생성 API
     @PostMapping("/receipt/{date}")
     public void saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                          @RequestPart(value = "file") MultipartFile file,
                          @RequestPart(value = "info") CreateReceiptRequest dto) throws IOException {
-        expenseService.createReceiptExpense(file, dto);
+        expenseService.uploadReceipt(file, dto);
+       // expenseService.createReceiptExpense(file, dto);
     }
 
 
