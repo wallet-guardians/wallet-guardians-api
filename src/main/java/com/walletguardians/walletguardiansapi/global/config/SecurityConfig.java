@@ -1,5 +1,7 @@
 package com.walletguardians.walletguardiansapi.global.config;
 
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -64,4 +66,9 @@ public class SecurityConfig {
     return new JwtAuthenticationFilter(jwtService);
   }
 
+  // GCS 관련 의존성 주입을 위한 설정
+  @Bean
+  public Storage storage() {
+    return StorageOptions.getDefaultInstance().getService();
+  }
 }
