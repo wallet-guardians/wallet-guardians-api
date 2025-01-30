@@ -1,6 +1,12 @@
 server:
-  port: 8080
   address: 0.0.0.0
+  port: 443
+  ssl:
+    enabled: true
+    key-store: file:/etc/ssl/certs/wallet-guardians.duckdns.org.jks
+    key-store-password: ${SSL_KEYSTORE_PASSWORD} // 서버에 환경변수로 등록함
+    key-store-type: JKS
+    key-alias: 1
 
 spring:
   application:
