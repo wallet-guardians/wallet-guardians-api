@@ -7,6 +7,8 @@ import com.walletguardians.walletguardiansapi.domain.user.repository.UserReposit
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
+import com.walletguardians.walletguardiansapi.global.exception.BaseException;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +37,7 @@ public class AuthService {
     User user = userService.findUserByEmail(userLoginRegister.getEmail());
 
     if (!user.isPasswordValid(passwordEncoder, userLoginRegister.getPassword())) {
-      throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+      throw new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID);
     }
 
     return jwtService.signIn(userLoginRegister.getEmail(), userLoginRegister.getPassword());
