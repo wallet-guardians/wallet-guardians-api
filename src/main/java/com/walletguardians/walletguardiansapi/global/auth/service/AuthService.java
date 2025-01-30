@@ -11,6 +11,8 @@ import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public void registerUser(UserRegisterRequest userRegisterRequest) {
+  public void signUpUser(UserRegisterRequest userRegisterRequest) {
     User user = userRepository.save(userRegisterRequest.toUserEntity());
     user.encodePassword(passwordEncoder);
   }
@@ -39,6 +41,17 @@ public class AuthService {
     }
 
     return jwtService.signIn(userLoginRegister.getEmail(), userLoginRegister.getPassword());
+  }
+
+  @Transactional
+  public ResponseEntity<String> logout(String accessToken, String email) {
+    boolean expiration = jwtService.validateToken(accessToken);
+    if (expiration) {
+      jwtService.deleteRefreshToken(email);
+    } else {
+      throw new IllegalArgumentException("이미 권한이 없는 토큰 보유자입니다.");
+    }
+    return ResponseEntity.ok("로그아웃 완료");
   }
 
 }
