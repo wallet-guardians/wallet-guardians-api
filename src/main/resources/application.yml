@@ -27,9 +27,6 @@ spring:
         format_sql: true
         show_sql: true
 
-  file:
-    dir: /Users/images/
-
   servlet:
     multipart:
       enabled: true
