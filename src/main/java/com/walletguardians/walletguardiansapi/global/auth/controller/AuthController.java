@@ -24,7 +24,7 @@ public class AuthController {
   private final JwtService jwtService;
   private final AuthService authService;
 
-  @PostMapping("/sign-up")
+  @PostMapping("/signup")
   public ResponseEntity<String> signUp(@RequestBody UserRegisterRequest userRegisterRequest) {
     authService.signUpUser(userRegisterRequest);
     return ResponseEntity.ok().body("성공적으로 회원등록이 완료되었습니다.");
@@ -35,7 +35,7 @@ public class AuthController {
     return ResponseEntity.ok().body(authService.login(userLoginRegister));
   }
 
-  @DeleteMapping("/log-out")
+  @DeleteMapping("/logout")
   public ResponseEntity<String> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails,
       HttpServletRequest request) {
     String accessToken = jwtService.extractAccessToken(request)
