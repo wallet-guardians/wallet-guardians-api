@@ -25,7 +25,7 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public void registerUser(UserRegisterRequest userRegisterRequest) {
+  public void signUpUser(UserRegisterRequest userRegisterRequest) {
     User user = userRepository.save(userRegisterRequest.toUserEntity());
     user.encodePassword(passwordEncoder);
   }
