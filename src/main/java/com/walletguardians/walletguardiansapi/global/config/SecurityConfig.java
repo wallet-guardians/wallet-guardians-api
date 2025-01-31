@@ -2,6 +2,7 @@ package com.walletguardians.walletguardiansapi.global.config;
 
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
@@ -30,7 +34,6 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-  // 특정 HTTP 요청에 대한 웹 기반 보안 구성
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector)
       throws Exception {
@@ -39,20 +42,14 @@ public class SecurityConfig {
         .formLogin(AbstractHttpConfigurer::disable)
         .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
             SessionCreationPolicy.STATELESS))
-        // 인증되지 않은 요청에 대한 에러 (401 에러, exception 커스텀 가능)
         .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(
             HttpStatus.UNAUTHORIZED)))
-
-        /**
-         * 아래에 적혀있는 url은 인증 없이 접근 가능
-         * 이외의 url은 security에 의해 제한됨
-         */
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/login")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/sign-up")).permitAll()
             .anyRequest().authenticated())
-        // jwtFilter 후 UsernamePasswordAuthenticationFilter 인증 처리
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
@@ -62,6 +59,19 @@ public class SecurityConfig {
   @Bean
   public JwtAuthenticationFilter jwtFilter() {
     return new JwtAuthenticationFilter(jwtService);
+  }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("*"));
+    configuration.setMaxAge(3600L);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
   }
 
 }
