@@ -1,5 +1,10 @@
 server:
   port: 8080
+  ssl:
+    enabled: true # SSL을 활성화합니다.
+    key-store: classpath:keystore.p12 # 생성한 keystore 파일 경로
+    key-store-password: 123456 # keystore 파일의 비밀번호
+    key-store-type: PKCS12 # keystore 파일의 형식
 
 spring:
   application:
