@@ -7,8 +7,11 @@ import com.walletguardians.walletguardiansapi.domain.user.repository.UserReposit
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
+import com.walletguardians.walletguardiansapi.global.exception.BaseException;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +27,7 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public void registerUser(UserRegisterRequest userRegisterRequest) {
+  public void signUpUser(UserRegisterRequest userRegisterRequest) {
     User user = userRepository.save(userRegisterRequest.toUserEntity());
     user.encodePassword(passwordEncoder);
   }
@@ -34,10 +37,21 @@ public class AuthService {
     User user = userService.findUserByEmail(userLoginRegister.getEmail());
 
     if (!user.isPasswordValid(passwordEncoder, userLoginRegister.getPassword())) {
-      throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+      throw new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID);
     }
 
     return jwtService.signIn(userLoginRegister.getEmail(), userLoginRegister.getPassword());
+  }
+
+  @Transactional
+  public ResponseEntity<String> logout(String accessToken, String email) {
+    boolean expiration = jwtService.validateToken(accessToken);
+    if (expiration) {
+      jwtService.deleteRefreshToken(email);
+    } else {
+      throw new IllegalArgumentException("이미 권한이 없는 토큰 보유자입니다.");
+    }
+    return ResponseEntity.ok("로그아웃 완료");
   }
 
 }
