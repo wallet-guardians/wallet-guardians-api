@@ -29,7 +29,7 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseEntity<BaseResponse<Void>> register(@RequestBody UserRegisterRequest userRegisterRequest) {
-    authService.registerUser(userRegisterRequest);
+    authService.signUpUser(userRegisterRequest);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
@@ -40,12 +40,13 @@ public class AuthController {
   }
 
   @DeleteMapping("/logout")
-  public ResponseEntity<String> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+  public ResponseEntity<BaseResponse<Void>> logout(@AuthenticationPrincipal CustomUserDetails customUserDetails,
       HttpServletRequest request) {
     String accessToken = jwtService.extractAccessToken(request)
         .filter(jwtService::validateToken)
         .orElse(null);
-    return authService.logout(accessToken, customUserDetails.getUsername()); //username = email
+    authService.logout(accessToken, customUserDetails.getUsername());
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
 }
