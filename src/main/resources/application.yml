@@ -1,12 +1,11 @@
 server:
   address: 0.0.0.0
-  port: 443
+  port: 8080
+  # 리버스 프록시 설정을 처리하기 위해 'forward-headers-strategy'를 활성화
+  tomcat:
+    protocol-header: X-Forwarded-Proto
   ssl:
-    enabled: true
-    key-store: file:/etc/ssl/certs/wallet-guardians.duckdns.org.jks
-    key-store-password: ${SSL_KEYSTORE_PASSWORD} // 서버에 환경변수로 등록함
-    key-store-type: JKS
-    key-alias: 1
+    enabled: false
 
 spring:
   application:
@@ -27,6 +26,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+
+logging:
+  level:
+    org.springframework.boot.web.embedded.tomcat: DEBUG
+
 
 jwt:
   secret-Key: 2c1aa3edcdb77bfdb894e80077541102e572ffe15907f0c20053be1611c29f6c71bf54e9fb366849c4babd9cc50681e6e3170dd390a45d947bacd6f46c4478c2
