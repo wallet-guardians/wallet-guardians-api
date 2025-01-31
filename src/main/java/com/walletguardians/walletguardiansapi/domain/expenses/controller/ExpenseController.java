@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/expense")
+@RequestMapping("/api/expense")
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;
