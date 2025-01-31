@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // jpa가 해당 엔터티 정보에 접근하는데, reflection api 사용하는데 기본생성자 필요
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Expense {
 
     @Id
