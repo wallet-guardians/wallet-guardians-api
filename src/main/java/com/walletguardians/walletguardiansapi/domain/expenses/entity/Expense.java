@@ -27,7 +27,6 @@ public class Expense {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-
     @Column(nullable = false)
     private String category;
 

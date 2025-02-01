@@ -1,5 +1,5 @@
 server:
-port: 8080
+  port: 8080
 
 spring:
   application:
@@ -12,7 +12,6 @@ spring:
           location: classpath:lively-marking-448507-f6-eafda9b2761c.json
         project-id: lively-marking-448507-f6
         bucket: wallet_guardians_bucket
-
   datasource:
     url: jdbc:mysql://localhost:3306/jpa
     driver-class-name: com.mysql.cj.jdbc.Driver

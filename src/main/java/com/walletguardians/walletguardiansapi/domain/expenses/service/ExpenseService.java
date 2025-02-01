@@ -6,7 +6,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
-
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
@@ -41,7 +40,7 @@ public class ExpenseService {
         expense.setDate(date);
         expenseRepository.save(expense);
     }
-
+  
     public List<ExpenseResponse> getExpenses(Date date) {
         List<Expense> expenses = expenseRepository.findAll();
         List<ExpenseResponse> expenseResponses = new ArrayList<>();
@@ -52,7 +51,7 @@ public class ExpenseService {
         }
         return expenseResponses;
     }
-
+  
     public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest) {
         Expense updateExpense = updateExpenseRequest.toEntity();
         Expense findExpense = expenseRepository.findById(id)
@@ -82,5 +81,4 @@ public class ExpenseService {
             e.printStackTrace();
         }
     }
-
 }
