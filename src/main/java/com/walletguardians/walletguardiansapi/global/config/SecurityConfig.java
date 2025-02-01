@@ -48,7 +48,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/login")).permitAll()
-            .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/sign-up")).permitAll()
+            .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/signup")).permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
