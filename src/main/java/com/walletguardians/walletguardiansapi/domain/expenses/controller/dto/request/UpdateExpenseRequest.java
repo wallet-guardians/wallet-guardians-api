@@ -5,7 +5,7 @@ import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 
 public class UpdateExpenseRequest {
 
-    private Category category;
+    private String category;
     private int amount;
     private String storeName;
     private String description;

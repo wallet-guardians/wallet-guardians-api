@@ -1,6 +1,5 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.entity;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,7 +9,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // jpa가 해당 엔터티 정보에 접근하는데, reflection api 사용하는데 기본생성자 필요
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Expense {
 
     @Id
@@ -18,23 +17,27 @@ public class Expense {
     @Column(name = "expense_id")
     private Long id;
 
+    @Column(nullable = false)
     private int amount;
 
+    @Column // null일 수 있음
     private String description;
 
+    @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 카테고리가 항상 사용되는 것은 아니고, 즉시로딩은 문제가 많으므로 FetchType을 Lazy로 설정
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @Column(nullable = false)
+    private String category;
 
+    @Column(nullable = false, name = "store_name")
     private String storeName;
 
+    @Column(name = "img_path") // null일 수 있음
     private String imagePath;
 
     @Builder
-    private Expense(Long id, int amount, String description, Date date, Category category, String storeName, String imagePath) {
+    private Expense(Long id, int amount, String description, Date date, String category, String storeName, String imagePath) {
         this.id = id;
         this.amount = amount;
         this.description = description;

@@ -1,6 +1,5 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import lombok.Builder;
 
@@ -8,7 +7,7 @@ public class ExpenseResponse {
 
     private Long id;
 
-    private Category category;
+    private String category;
 
     private int amount;
 
@@ -17,7 +16,7 @@ public class ExpenseResponse {
     private String description;
 
     @Builder
-    private ExpenseResponse(Long id, Category category, int amount, String storeName, String description) {
+    private ExpenseResponse(Long id, String category, int amount, String storeName, String description) {
         this.id = id;
         this.category = category;
         this.amount = amount;
