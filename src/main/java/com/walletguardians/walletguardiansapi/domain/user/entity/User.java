@@ -41,16 +41,15 @@ public class User {
   private String password;
 
   @Default
-  @Column(nullable = false)
-  private String title = "";
+  private String title = null;
 
   @Default
-  @Column(nullable = false, name = "defense-rate")
+  @Column(nullable = false, name = "defense_rate")
   private float defenseRate = 0;
 
   @Default
-  @Column(nullable = false, name = "user-deleted")
-  private boolean userDeleted = false;
+  @Column(nullable = false, name = "profile_picture_path")
+  private String profilePicturePath = "";
 
   @Enumerated(EnumType.STRING)
   private Role role;
