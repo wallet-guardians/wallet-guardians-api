@@ -1,6 +1,5 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 
 public class UpdateExpenseRequest {
