@@ -1,15 +1,17 @@
 package com.walletguardians.walletguardiansapi.domain.friend.controller;
 
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatus;
+import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.FriendshipStatusDTO;
 import com.walletguardians.walletguardiansapi.domain.friend.service.FriendshipService;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
-import java.util.Map;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friends")
@@ -18,39 +20,71 @@ public class FriendshipController {
 
     private final FriendshipService friendshipService;
     private final UserService userService;
-    private final JwtService jwtService; // JwtService 주입
+    private final JwtService jwtService;
+
+    private String extractEmailFromToken(String token) {
+        if (token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("토큰이 제공되지 않았습니다.");
+        }
+        return jwtService.getUserPk(token.replaceFirst("(?i)bearer ", "").trim());
+    }
 
     @PostMapping("/request")
-    public FriendshipStatus sendFriendRequest(@RequestHeader("ACCESS-AUTH-KEY") String accessToken,
+    public ResponseEntity<BaseResponse<FriendshipStatusDTO>> sendFriendRequest(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
         @RequestBody Map<String, String> requestBody) {
+
+        String senderEmail = extractEmailFromToken(accessToken);
         String receiverEmail = requestBody.get("receiverEmail");
-        String senderEmail = jwtService.getUserPk(accessToken.replace("Bearer ", ""));
+
+        if (receiverEmail == null || receiverEmail.isEmpty()) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "receiverEmail이 필요합니다.", 400, null));
+        }
+
         User sender = userService.findUserByEmail(senderEmail);
         User receiver = userService.findUserByEmail(receiverEmail);
-        return friendshipService.sendFriendRequest(sender, receiver);
+
+        FriendshipStatusDTO friendRequest = friendshipService.sendFriendRequest(sender, receiver);
+        return ResponseEntity.ok(new BaseResponse<>(true, "친구 요청이 전송되었습니다.", 200, friendRequest));
     }
 
+    @PutMapping("/accept")
+    public ResponseEntity<BaseResponse<String>> acceptFriendRequest(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
+        @RequestBody Map<String, String> requestBody) {
 
-    // 친구 요청 수락
-    @PutMapping("/accept/{requestId}")
-    public FriendshipStatus acceptFriendRequest(@PathVariable Long requestId) {
-        FriendshipStatus friendshipStatus = friendshipService.findById(requestId);
-        return friendshipService.acceptFriendRequest(friendshipStatus);
+        String receiverEmail = extractEmailFromToken(accessToken);
+        String senderEmail = requestBody.get("senderEmail");
+
+        if (senderEmail == null || senderEmail.isEmpty()) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "senderEmail이 필요합니다.", 400, null));
+        }
+
+        boolean success = friendshipService.acceptFriendRequest(receiverEmail, senderEmail);
+        if (success) {
+            return ResponseEntity.ok(new BaseResponse<>(true, "친구 요청 수락 완료", 200, null));
+        } else {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "친구 요청 수락 실패 (존재하지 않는 요청)", 400, null));
+        }
     }
 
-    // 팔로잉 목록 조회
     @GetMapping("/following")
-    public List<FriendshipStatus> getFollowingList(@RequestHeader("Authorization") String token) {
-        String email = jwtService.getUserPk(token.replace("Bearer ", ""));
-        User user = userService.findUserByEmail(email);
-        return friendshipService.getFollowingList(user);
+    public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFollowingList(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
+
+        User user = userService.findUserByEmail(extractEmailFromToken(accessToken));
+        List<FriendshipStatusDTO> followingList = friendshipService.getFollowingList(user);
+
+        return ResponseEntity.ok(new BaseResponse<>(true, "팔로잉 목록 조회 성공", 200, followingList));
     }
 
-    // 팔로워 목록 조회
     @GetMapping("/followers")
-    public List<FriendshipStatus> getFollowerList(@RequestHeader("Authorization") String token) {
-        String email = jwtService.getUserPk(token.replace("Bearer ", ""));
-        User user = userService.findUserByEmail(email);
-        return friendshipService.getFollowerList(user);
+    public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFollowerList(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
+
+        User user = userService.findUserByEmail(extractEmailFromToken(accessToken));
+        List<FriendshipStatusDTO> followerList = friendshipService.getFollowerList(user);
+
+        return ResponseEntity.ok(new BaseResponse<>(true, "팔로워 목록 조회 성공", 200, followerList));
     }
 }

@@ -1,11 +1,13 @@
 package com.walletguardians.walletguardiansapi.domain.friend.service;
 
+import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.FriendshipStatusDTO;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatus;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendshipStatusRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -14,35 +16,52 @@ public class FriendshipService {
 
     private final FriendshipStatusRepository friendshipStatusRepository;
 
-    // 친구 요청 보내기
-    public FriendshipStatus sendFriendRequest(User sender, User receiver) {
+    @Transactional
+    public FriendshipStatusDTO sendFriendRequest(User sender, User receiver) {
+        if (friendshipStatusRepository.findBySenderAndReceiver(sender, receiver).isPresent()) {
+            throw new IllegalArgumentException("이미 친구 요청을 보냈습니다.");
+        }
+
         FriendshipStatus friendshipStatus = FriendshipStatus.builder()
             .sender(sender)
             .receiver(receiver)
-            .friendshipStatus(false) // 기본적으로 요청 상태
+            .friendshipStatus(false)
             .build();
 
-        return friendshipStatusRepository.save(friendshipStatus);
+        FriendshipStatus savedStatus = friendshipStatusRepository.save(friendshipStatus);
+        return new FriendshipStatusDTO(savedStatus);
     }
 
-    // 친구 요청 수락
-    public FriendshipStatus acceptFriendRequest(FriendshipStatus friendshipStatus) {
-        friendshipStatus.setFriendshipStatus(true); // 상태를 친구로 변경
-        return friendshipStatusRepository.save(friendshipStatus);
+    @Transactional
+    public boolean acceptFriendRequest(String receiverEmail, String senderEmail) {
+        Optional<FriendshipStatus> friendshipStatusOpt = friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail);
+
+        if (friendshipStatusOpt.isEmpty()) {
+            return false;
+        }
+
+        FriendshipStatus friendshipStatus = friendshipStatusOpt.get();
+
+        friendshipStatus.updateFriendshipStatus(true);
+        friendshipStatusRepository.save(friendshipStatus);
+
+        return true;
     }
 
-    // 내가 팔로잉하는 사용자 목록 조회
-    public List<FriendshipStatus> getFollowingList(User user) {
-        return friendshipStatusRepository.findBySender(user);
+    @Transactional(readOnly = true)
+    public List<FriendshipStatusDTO> getFollowingList(User user) {
+        return friendshipStatusRepository.findBySender(user)
+            .stream()
+            .distinct()
+            .map(FriendshipStatusDTO::fromEntity)
+            .toList();
     }
 
-    // 나를 팔로우하는 사용자 목록 조회
-    public List<FriendshipStatus> getFollowerList(User user) {
-        return friendshipStatusRepository.findByReceiver(user);
-    }
-
-    public FriendshipStatus findById(Long id) {
-        return friendshipStatusRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("해당 ID의 친구 요청이 없습니다."));
+    @Transactional(readOnly = true)
+    public List<FriendshipStatusDTO> getFollowerList(User user) {
+        return friendshipStatusRepository.findByReceiver(user)
+            .stream()
+            .map(FriendshipStatusDTO::fromEntity)
+            .toList();
     }
 }

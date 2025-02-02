@@ -35,7 +35,7 @@ public class User {
   private String password;
 
   @Column(nullable = false)
-  private String title = "";
+  private String title;
 
   @Column(nullable = false, name = "defense-rate")
   private float defenseRate = 0;
@@ -46,15 +46,12 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  // 팔로워 리스트 (내가 팔로워로 등록된 관계)
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<FriendshipStatus> followerList;
 
-  // 팔로잉 리스트 (내가 팔로잉한 사용자와의 관계)
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<FriendshipStatus> followingList;
 
-  // == 패스워드 암호화 == //
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }
