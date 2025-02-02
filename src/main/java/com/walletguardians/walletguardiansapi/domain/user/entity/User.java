@@ -15,7 +15,6 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.jdbc.Expectation.None;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
@@ -41,7 +40,6 @@ public class User {
   private String password;
 
   @Default
-  @Column(nullable = false)
   private String title = "";
 
   @Default
