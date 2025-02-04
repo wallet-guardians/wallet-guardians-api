@@ -67,7 +67,8 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(
-        Arrays.asList("http://localhost:5173", "https://wallet-guardians.vercel.app"));
+        Arrays.asList("http://localhost:5173", "https://wallet-guardians.vercel.app",
+            "https://wallet-guardians.vercel.app/login"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setMaxAge(3600L);
