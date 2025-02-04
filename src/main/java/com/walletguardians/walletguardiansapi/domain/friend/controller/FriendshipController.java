@@ -127,4 +127,44 @@ public class FriendshipController {
             return ResponseEntity.badRequest().body(new BaseResponse<>(false, "삭제할 친구 관계가 없습니다.", 400, null));
         }
     }
+
+        @GetMapping("/pending-requests")
+        public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getPendingRequests(
+            @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
+
+            String userEmail = extractEmailFromToken(accessToken);
+            List<FriendshipStatusDTO> pendingRequests = friendshipService.getPendingRequests(userEmail);
+
+            return ResponseEntity.ok(new BaseResponse<>(true, "보낸 친구 요청 목록 조회 성공", 200, pendingRequests));
+        }
+
+        @GetMapping("/friendlist")
+        public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFriendList(
+            @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
+
+            String userEmail = extractEmailFromToken(accessToken);
+            List<FriendshipStatusDTO> friends = friendshipService.getFriendList(userEmail);
+
+            return ResponseEntity.ok(new BaseResponse<>(true, "친구 목록 조회 성공", 200, friends));
+        }
+    @DeleteMapping("/cancel-request")
+    public ResponseEntity<BaseResponse<String>> cancelFriendRequest(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
+        @RequestBody Map<String, String> requestBody) {
+
+        String senderEmail = extractEmailFromToken(accessToken);
+        String receiverEmail = requestBody.get("receiverEmail");
+
+        if (receiverEmail == null || receiverEmail.isEmpty()) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "receiverEmail이 필요합니다.", 400, null));
+        }
+
+        boolean success = friendshipService.cancelFriendRequest(senderEmail, receiverEmail);
+        if (success) {
+            return ResponseEntity.ok(new BaseResponse<>(true, "친구 요청을 취소했습니다.", 200, null));
+        } else {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "취소할 친구 요청이 없습니다.", 400, null));
+        }
+    }
+
 }

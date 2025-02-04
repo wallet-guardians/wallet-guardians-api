@@ -5,6 +5,8 @@ import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipSta
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendshipStatusRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
+import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class FriendshipService {
 
     private final FriendshipStatusRepository friendshipStatusRepository;
+    private final UserService userService;
 
     @Transactional
     public FriendshipStatusDTO sendFriendRequest(User sender, User receiver) {
@@ -81,8 +84,6 @@ public class FriendshipService {
         return false;
     }
 
-
-
     @Transactional(readOnly = true)
     public List<FriendshipStatusDTO> getFollowingList(User user) {
         return friendshipStatusRepository.findBySender(user)
@@ -99,4 +100,34 @@ public class FriendshipService {
             .map(FriendshipStatusDTO::fromEntity)
             .toList();
     }
+    public List<FriendshipStatusDTO> getPendingRequests(String userEmail) {
+        List<FriendshipStatus> pendingRequests = friendshipStatusRepository.findPendingRequestsBySender(userEmail, FriendshipStatusEnum.PENDING);
+        return pendingRequests.stream()
+            .map(FriendshipStatusDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
+    public List<FriendshipStatusDTO> getFriendList(String userEmail) {
+        List<FriendshipStatus> friends = friendshipStatusRepository.findAcceptedFriends(userEmail, FriendshipStatusEnum.ACCEPTED);
+        return friends.stream()
+            .map(FriendshipStatusDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+
+    public boolean cancelFriendRequest(String senderEmail, String receiverEmail) {
+        User sender = userService.findUserByEmail(senderEmail);
+        User receiver = userService.findUserByEmail(receiverEmail);
+
+        Optional<FriendshipStatus> statusOptional = friendshipStatusRepository.findBySenderAndReceiver(sender, receiver);
+
+        if (statusOptional.isEmpty() || !statusOptional.get().getFriendshipStatus().equals(FriendshipStatusEnum.PENDING)) {
+            return false;
+        }
+        friendshipStatusRepository.delete(statusOptional.get());
+        return true;
+    }
+
+
+
+
 }
