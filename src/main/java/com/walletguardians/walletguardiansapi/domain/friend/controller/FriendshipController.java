@@ -87,4 +87,44 @@ public class FriendshipController {
 
         return ResponseEntity.ok(new BaseResponse<>(true, "팔로워 목록 조회 성공", 200, followerList));
     }
+
+    @DeleteMapping("/reject")
+    public ResponseEntity<BaseResponse<String>> rejectFriendRequest(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
+        @RequestBody Map<String, String> requestBody) {
+
+        String receiverEmail = extractEmailFromToken(accessToken);
+        String senderEmail = requestBody.get("senderEmail");
+
+        if (senderEmail == null || senderEmail.isEmpty()) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "senderEmail이 필요합니다.", 400, null));
+        }
+
+        boolean success = friendshipService.rejectFriendRequest(receiverEmail, senderEmail);
+        if (success) {
+            return ResponseEntity.ok(new BaseResponse<>(true, "친구 요청을 거절했습니다.", 200, null));
+        } else {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "거절할 친구 요청이 없습니다.", 400, null));
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponse<String>> deleteFriendship(
+        @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
+        @RequestBody Map<String, String> requestBody) {
+
+        String userEmail = extractEmailFromToken(accessToken);
+        String targetEmail = requestBody.get("deleteEmail");
+
+        if (targetEmail == null || targetEmail.isEmpty()) {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "삭제할 이메일이 필요합니다.", 400, null));
+        }
+
+        boolean success = friendshipService.deleteFriendship(userEmail, targetEmail);
+        if (success) {
+            return ResponseEntity.ok(new BaseResponse<>(true, "친구 관계를 삭제했습니다.", 200, null));
+        } else {
+            return ResponseEntity.badRequest().body(new BaseResponse<>(false, "삭제할 친구 관계가 없습니다.", 400, null));
+        }
+    }
 }

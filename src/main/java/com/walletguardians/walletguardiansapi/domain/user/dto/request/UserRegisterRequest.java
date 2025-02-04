@@ -10,7 +10,6 @@ public class UserRegisterRequest {
   private String password;
   private String username;
 
-
   public User toUserEntity() {
     return User.builder()
         .email(email)
@@ -19,5 +18,4 @@ public class UserRegisterRequest {
         .role(Role.USER)
         .build();
   }
-
 }
