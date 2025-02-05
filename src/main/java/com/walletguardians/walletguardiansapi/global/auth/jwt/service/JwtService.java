@@ -28,6 +28,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -155,8 +156,11 @@ public class JwtService {
     refreshTokenRepository.save(refreshTokenEntity);
   }
 
-  public void deleteRefreshToken(String email) {
-    refreshTokenRepository.deleteByUserEmail(email);
+  @Transactional
+  public void deleteRefreshTokenByEmail(String email) {
+    RefreshToken refreshToken = refreshTokenRepository.findByUserEmail(email)
+        .orElseThrow(() -> new IllegalArgumentException("No refresh token found for user with email: " + email));
+    refreshTokenRepository.delete(refreshToken);
   }
 
 }
