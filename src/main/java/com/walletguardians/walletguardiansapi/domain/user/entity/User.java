@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.domain.user.entity;
 
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatus;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
 import jakarta.persistence.*;
@@ -38,14 +39,17 @@ public class User {
   @Default
   private String title = "";
 
-  @Column(nullable = false, name = "defense-rate")
+  @Column(nullable = false, name = "defense_rate")
   private float defenseRate = 0;
 
-  @Column(nullable = false, name = "user-deleted")
+  @Column(nullable = false, name = "user_deleted")
   private boolean userDeleted = false;
 
   @Enumerated(EnumType.STRING)
   private Role role;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Expense> expenses;
 
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<FriendshipStatus> followerList;
