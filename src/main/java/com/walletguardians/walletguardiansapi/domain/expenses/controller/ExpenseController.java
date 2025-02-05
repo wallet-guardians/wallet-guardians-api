@@ -35,7 +35,7 @@ public class ExpenseController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
-  @GetMapping("/monthly")
+  @GetMapping("/month")
   public ResponseEntity<BaseResponse<List<Expense>>> getMonthlyExpenses(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestParam int year,
@@ -63,9 +63,10 @@ public class ExpenseController {
   }
 
   @DeleteMapping("/{id}")
-  public void deleteExpense(@PathVariable Long id,
+  public ResponseEntity<BaseResponse<Void>> deleteExpense(@PathVariable Long id,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     expenseService.deleteExpense(id, customUserDetails);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
   @PostMapping("/receipt")
