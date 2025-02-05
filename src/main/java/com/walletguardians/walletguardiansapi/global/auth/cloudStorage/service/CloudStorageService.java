@@ -1,13 +1,24 @@
 package com.walletguardians.walletguardiansapi.global.auth.cloudStorage.service;
 
 
+import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
+import com.walletguardians.walletguardiansapi.global.exception.BaseException;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CloudStorageService {
@@ -17,34 +28,61 @@ public class CloudStorageService {
   @Value("${spring.cloud.gcp.storage.bucket}")
   private String bucketName;
 
-  public void createUserFolder(String username) throws
-      StorageException {
-    String folderPath = username + "/";
-    BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, folderPath).build();
-    storage.create(blobInfo);
+  public void uploadPicture(MultipartFile pictureFile, String pictureType, CreateReceiptRequest dto,
+      String email, String date) {
+    if (pictureFile.isEmpty()) {
+      throw new IllegalArgumentException("Picture is empty");
+    }
+
+    String uniqueFileName = UUID.randomUUID().toString() + "_" + pictureFile.getOriginalFilename();
+    String filePath = email + "/" + pictureType + "/" + date + "/" + uniqueFileName;
+    String contentType = pictureFile.getContentType();
+
+    BlobId blobId = BlobId.of(bucketName, filePath);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+        .setContentType(contentType)
+        .build();
+
+    try (WriteChannel writer = storage.writer(blobInfo)) {
+      byte[] fileData = pictureFile.getBytes();
+      writer.write(ByteBuffer.wrap(fileData));
+    } catch (Exception e) {
+      log.error("Failed to upload picture for user {}: {}", email, e.getMessage(), e);
+      throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (pictureType.equals("receipts")) {
+      replaceReceiptMetadata(filePath, dto);
+    }
   }
 
-  public void createReceiptFolder(String username) throws
-      StorageException {
-    String folderPath = username + "/receipts/";
-    BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, folderPath).build();
-    storage.create(blobInfo);
+  public void replaceReceiptMetadata(String receiptPath, CreateReceiptRequest dto) {
+    BlobId blobId = BlobId.of(bucketName, receiptPath);
+    Blob blob = storage.get(blobId);
+
+    if (blob == null) {
+      throw new IllegalArgumentException("File not found in Storage: " + receiptPath);
+    }
+
+    BlobInfo updatedBlobInfo = blob.toBuilder()
+        .setMetadata(Map.of(
+            "category", dto.getCategory(),
+            "description", dto.getDescription()
+        ))
+        .build();
+
+    storage.update(updatedBlobInfo);
   }
 
-  public void createProfilePictureFolder(String username) throws
-      StorageException {
-    String folderPath = username + "/profilePicture/";
-    BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, folderPath).build();
-    storage.create(blobInfo);
+  public void deletePicture(String pictureName, String pictureType, String email) {
+    String filePath = email + "/" + pictureType + "/" + pictureName;
+    BlobId blobId = BlobId.of(bucketName, filePath);
+    try {
+      storage.delete(blobId);
+    } catch (Exception e) {
+      log.error("Failed to delete receipt for user {}: {}", email, e.getMessage(), e);
+      throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-
-  public void createUserAndReceiptAndProfileFolder(String username) throws
-      StorageException {
-    createUserFolder(username);
-    createReceiptFolder(username);
-    createProfilePictureFolder(username);
-  }
-
-
 
 }
