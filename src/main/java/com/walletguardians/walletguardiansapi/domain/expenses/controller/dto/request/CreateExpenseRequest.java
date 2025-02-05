@@ -2,26 +2,32 @@ package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.re
 
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 
+import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CreateExpenseRequest {
 
-    private int amount;
+  private int amount;
 
-    private String category;
+  private String category;
 
-    private String description;
+  private String description;
 
-    private String storeName;
+  private String storeName;
 
-    public Expense toEntity() {
-        return Expense.builder()
-                .amount(amount)
-                .category(category)
-                .description(description)
-                .storeName(storeName)
-                .build();
-    }
+  private User user;
+
+  public Expense toEntity() {
+    return Expense.builder()
+        .amount(amount)
+        .category(category)
+        .description(description)
+        .storeName(storeName)
+        .user(user)
+        .build();
+  }
 
 }
