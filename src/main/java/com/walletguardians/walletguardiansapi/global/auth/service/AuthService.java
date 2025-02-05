@@ -40,16 +40,5 @@ public class AuthService {
 
     return jwtService.signIn(userLoginRequest.getEmail(), userLoginRequest.getPassword());
   }
-}
-
-@Transactional
-public void logout(String accessToken, String email) {
-  boolean expiration = jwtService.validateToken(accessToken);
-    if (expiration) {
-      jwtService.deleteRefreshToken(email);
-    } else {
-      throw new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID);
-    }
-  }
 
 }
