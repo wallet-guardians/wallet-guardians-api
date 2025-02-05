@@ -6,8 +6,10 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.ExpenseService;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
+import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,34 +22,39 @@ import java.util.Date;
 @RequestMapping("/expense")
 @RequiredArgsConstructor
 public class ExpenseController {
-    private final ExpenseService expenseService;
 
-    @PostMapping("/{date}")
-    public void createExpense(@RequestBody CreateExpenseRequest createExpenseRequest, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        expenseService.createExpense(date, createExpenseRequest);
-    }
+  private final ExpenseService expenseService;
 
-    @GetMapping("/{date}")
-    public List<ExpenseResponse> getMember(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return expenseService.getExpenses(date);
-    }
+  @PostMapping("/{date}")
+  public void createExpense(@RequestBody CreateExpenseRequest createExpenseRequest,
+      @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    expenseService.createExpense(date, createExpenseRequest);
+  }
 
-    @PutMapping("/{id}")
-    public void updateExpense(@PathVariable Long id, @RequestBody UpdateExpenseRequest updateExpenseRequest) {
-        expenseService.updateExpense(id, updateExpenseRequest);
-    }
+  @GetMapping("/{date}")
+  public List<ExpenseResponse> getMember(
+      @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    return expenseService.getExpenses(date);
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteExpense(@PathVariable Long id) {
-        expenseService.deleteExpense(id);
-    }
+  @PutMapping("/{id}")
+  public void updateExpense(@PathVariable Long id,
+      @RequestBody UpdateExpenseRequest updateExpenseRequest) {
+    expenseService.updateExpense(id, updateExpenseRequest);
+  }
 
-    @PostMapping("/receipt/{date}")
-    public void saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-                         @RequestPart(value = "file") MultipartFile file,
-                         @RequestPart(value = "info") CreateReceiptRequest dto) throws IOException {
-        expenseService.uploadReceipt(file, dto);
-       // expenseService.createReceiptExpense(file, dto);
-    }
+  @DeleteMapping("/{id}")
+  public void deleteExpense(@PathVariable Long id) {
+    expenseService.deleteExpense(id);
+  }
+
+  @PostMapping("/receipt/{date}")
+  public void saveFile(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+      @RequestPart(value = "file") MultipartFile file,
+      @RequestPart(value = "info") CreateReceiptRequest dto,
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    expenseService.uploadReceipt(file, dto, customUserDetails.getUsername(), date);
+    // expenseService.createReceiptExpense(file, dto);
+  }
 
 }
