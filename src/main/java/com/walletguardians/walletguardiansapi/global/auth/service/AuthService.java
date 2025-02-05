@@ -11,6 +11,7 @@ import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,17 +39,6 @@ public class AuthService {
     }
 
     return jwtService.signIn(userLoginRequest.getEmail(), userLoginRequest.getPassword());
-  }
-}
-
-@Transactional
-public void logout(String accessToken, String email) {
-  boolean expiration = jwtService.validateToken(accessToken);
-    if (expiration) {
-      jwtService.deleteRefreshToken(email);
-    } else {
-      throw new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID);
-    }
   }
 
 }
