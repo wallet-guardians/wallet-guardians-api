@@ -1,8 +1,12 @@
 package com.walletguardians.walletguardiansapi.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatus;
+import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UpdateUserRequest;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
+import com.walletguardians.walletguardiansapi.global.auth.jwt.entity.RefreshToken;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +22,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "USERS")
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
@@ -42,20 +46,24 @@ public class User {
   @Column(nullable = false, name = "defense_rate")
   private float defenseRate = 0;
 
-  @Column(nullable = false, name = "user_deleted")
-  private boolean userDeleted = false;
-
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Expense> expenses;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<FriendshipStatus> followerList;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<FriendshipStatus> followingList;
+
+  @JsonIgnore
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Budget budget;
 
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
@@ -64,4 +72,9 @@ public class User {
   public boolean isPasswordValid(PasswordEncoder passwordEncoder, String password) {
     return passwordEncoder.matches(password, this.password);
   }
+
+  public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
+    this.password = passwordEncoder.encode(newPassword);
+  }
+
 }
