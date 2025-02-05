@@ -18,6 +18,7 @@ spring:
           location: classpath:lively-marking-448507-f6-eafda9b2761c.json
         project-id: lively-marking-448507-f6
         bucket: wallet_guardians_bucket
+
   datasource:
     url: jdbc:mysql://34.58.4.225:3306/wallet_guardians?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
