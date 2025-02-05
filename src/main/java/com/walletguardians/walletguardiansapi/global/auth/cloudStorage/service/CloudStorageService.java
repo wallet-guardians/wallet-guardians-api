@@ -10,6 +10,7 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.nio.ByteBuffer;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class CloudStorageService {
   private String bucketName;
 
   public void uploadPicture(MultipartFile pictureFile, String pictureType, CreateReceiptRequest dto,
-      String email, String date) {
+      String email, LocalDate date) {
     if (pictureFile.isEmpty()) {
       throw new IllegalArgumentException("Picture is empty");
     }
