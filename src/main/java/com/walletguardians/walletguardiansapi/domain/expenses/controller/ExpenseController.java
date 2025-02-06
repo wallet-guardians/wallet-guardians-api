@@ -5,7 +5,6 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.ExpenseService;
-import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
@@ -24,7 +23,6 @@ import java.util.List;
 public class ExpenseController {
 
   private final ExpenseService expenseService;
-  private final UserService userService;
   private final BaseResponseService baseResponseService;
 
   @PostMapping("now")
@@ -62,10 +60,10 @@ public class ExpenseController {
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(expense));
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<BaseResponse<Void>> deleteExpense(@PathVariable Long id,
+  @DeleteMapping("/{expenseId}")
+  public ResponseEntity<BaseResponse<Void>> deleteExpense(@PathVariable Long expenseId,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    expenseService.deleteExpense(id, customUserDetails);
+    expenseService.deleteExpense(expenseId, customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
