@@ -3,7 +3,7 @@ package com.walletguardians.walletguardiansapi.domain.expenses.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.*;
 
 @Entity
@@ -14,34 +14,34 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Expense {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "expense_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "expense_id")
+  private Long id;
 
-    @Column(nullable = false)
-    private int amount;
+  @Column(nullable = false)
+  private int amount;
 
-    private String description;
+  private String description;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+  @Column(nullable = false)
+  private LocalDate date;
 
-    @Column(nullable = false)
-    private String category;
+  @Column(nullable = false)
+  private String category;
 
-    @Column(nullable = false, name = "store_name")
-    private String storeName;
+  @Column(nullable = false, name = "store_name")
+  private String storeName;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    public void update(Expense updateExpense) {
-        this.category = updateExpense.category;
-        this.amount = updateExpense.amount;
-        this.storeName = updateExpense.storeName;
-        this.description = updateExpense.description;
-    }
+  public void update(Expense updateExpense) {
+    this.category = updateExpense.category;
+    this.amount = updateExpense.amount;
+    this.storeName = updateExpense.storeName;
+    this.description = updateExpense.description;
+  }
 }
