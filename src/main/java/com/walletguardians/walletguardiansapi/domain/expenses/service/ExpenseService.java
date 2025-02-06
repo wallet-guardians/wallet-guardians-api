@@ -6,14 +6,11 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
-import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;
 import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.cloudStorage.service.CloudStorageService;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
-import com.walletguardians.walletguardiansapi.global.util.TimeUtil;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,17 +25,15 @@ public class ExpenseService {
 
   private final ExpenseRepository expenseRepository;
   private final CloudStorageService cloudStorageService;
-  private final UserRepository userRepository;
 
   @Value("${spring.cloud.gcp.storage.bucket}")
   private String bucketName;
 
   @Transactional
-  public void createExpense(CreateExpenseRequest createExpenseRequest, CustomUserDetails customUserDetails) {
-    User user = userRepository.findByEmail(customUserDetails.getUsername()).orElseThrow(()-> new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR));
-    createExpenseRequest.setUser(user);
-    Expense expense = createExpenseRequest.toEntity();
-    expense.setDate(TimeUtil.formatTime());
+  public void createExpense(CreateExpenseRequest createExpenseRequest,
+      CustomUserDetails customUserDetails, LocalDate date) {
+    User user = customUserDetails.getUser();
+    Expense expense = createExpenseRequest.toEntity(user, date);
     expenseRepository.save(expense);
   }
 
@@ -47,9 +42,8 @@ public class ExpenseService {
       int month) {
     Long userId = customUserDetails.getUserId();
 
-    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
-    LocalDateTime endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth()).withHour(23)
-        .withMinute(59).withSecond(59);
+    LocalDate startOfMonth = LocalDate.of(year, month, 1);
+    LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
 
     return expenseRepository.findAllByUserIdAndDateBetween(userId, startOfMonth, endOfMonth);
   }
@@ -82,10 +76,7 @@ public class ExpenseService {
   @Transactional(readOnly = true)
   public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
     Long userId = customUserDetails.getUserId();
-    LocalDateTime startOfDay = date.atStartOfDay();
-    LocalDateTime endOfDay = date.atTime(23, 59, 59);
-
-    return expenseRepository.findAllByUserIdAndDateBetween(userId, startOfDay, endOfDay);
+    return expenseRepository.findAllByUserIdAndDateBetween(userId, date, date);
   }
 
   @Transactional(readOnly = true)
