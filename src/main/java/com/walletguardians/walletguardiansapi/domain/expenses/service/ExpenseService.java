@@ -45,7 +45,7 @@ public class ExpenseService {
     LocalDate startOfMonth = LocalDate.of(year, month, 1);
     LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
 
-    return expenseRepository.findAllByUserIdAndDateBetween(userId, startOfMonth, endOfMonth);
+    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, startOfMonth, endOfMonth);
   }
 
   @Transactional
@@ -76,7 +76,7 @@ public class ExpenseService {
   @Transactional(readOnly = true)
   public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
     Long userId = customUserDetails.getUserId();
-    return expenseRepository.findAllByUserIdAndDateBetween(userId, date, date);
+    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date, date);
   }
 
   @Transactional(readOnly = true)
