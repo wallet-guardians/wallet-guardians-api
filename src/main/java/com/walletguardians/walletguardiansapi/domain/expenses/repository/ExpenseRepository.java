@@ -1,7 +1,7 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.repository;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +13,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     Optional<Expense> findByIdAndUserId(Long id, Long userId);
 
-    List<Expense> findAllByUserIdAndDateBetween(Long userId, LocalDateTime startTime, LocalDateTime endTime);
+    List<Expense> findAllByUserIdAndDateBetween(Long userId, LocalDate startTime, LocalDate endDate);
 }
