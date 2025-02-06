@@ -1,7 +1,7 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class ExpenseResponse {
 
   private Long id;
 
-  private LocalDateTime date;
+  private LocalDate date;
 
   private String category;
 
