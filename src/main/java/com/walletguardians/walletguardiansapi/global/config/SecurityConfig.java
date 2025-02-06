@@ -5,6 +5,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import java.util.Arrays;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,9 +67,11 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(
-        Arrays.asList("http://localhost:5173", "https://wallet-guardians.vercel.app",
-            "https://wallet-guardians.vercel.app/login"));
+//    configuration.setAllowedOrigins(
+//        Arrays.asList("http://localhost:5173", "https://wallet-guardians.vercel.app",
+//            "https://wallet-guardians.vercel.app/login"));
+    configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+    configuration.setAllowCredentials(true);
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setMaxAge(3600L);
