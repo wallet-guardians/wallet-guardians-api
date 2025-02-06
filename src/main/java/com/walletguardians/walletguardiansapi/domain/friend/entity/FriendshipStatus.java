@@ -26,7 +26,7 @@ public class FriendshipStatus {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
-    @Enumerated(EnumType.STRING) //Enum을 String으로 저장하여 JPQL 호환
+    @Enumerated(EnumType.STRING)
     @Column(name = "friendship_status", nullable = false)
     private FriendshipStatusEnum friendshipStatus;
 
@@ -37,8 +37,10 @@ public class FriendshipStatus {
         this.friendshipStatus = friendshipStatus;
     }
 
-    //친구 상태 업데이트 메서드 (ACCEPTED, PENDING 등)
     public void updateFriendshipStatus(FriendshipStatusEnum status) {
+        if (this.friendshipStatus == FriendshipStatusEnum.ACCEPTED) {
+            throw new IllegalStateException("이미 친구 상태입니다.");
+        }
         this.friendshipStatus = status;
     }
 

@@ -4,10 +4,12 @@ import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.Frien
 import com.walletguardians.walletguardiansapi.domain.friend.service.FriendshipService;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
+import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class FriendshipController {
         return jwtService.getUserPk(token.replaceFirst("(?i)bearer ", "").trim());
     }
 
-    @PostMapping("/request")
+    @PostMapping("/requests")
     public ResponseEntity<BaseResponse<FriendshipStatusDTO>> sendFriendRequest(
         @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
         @RequestBody Map<String, String> requestBody) {
@@ -68,24 +70,29 @@ public class FriendshipController {
         }
     }
 
-    @GetMapping("/following")
-    public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFollowingList(
-        @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
+    @GetMapping("/requests")
+    public ResponseEntity<List<FriendshipStatusDTO>> getFriendRequests(
+        @RequestParam(required = false, defaultValue = "accepted") String status,
+        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        User user = userService.findUserByEmail(extractEmailFromToken(accessToken));
-        List<FriendshipStatusDTO> followingList = friendshipService.getFollowingList(user);
+        String userEmail = userDetails.getUsername();
+        List<FriendshipStatusDTO> requests;
 
-        return ResponseEntity.ok(new BaseResponse<>(true, "팔로잉 목록 조회 성공", 200, followingList));
-    }
+        switch (status.toLowerCase()) {
+            case "accepted":
+                requests = friendshipService.getAcceptedFriends(userEmail);
+                break;
+            case "pending":
+                requests = friendshipService.getPendingRequests(userEmail);
+                break;
+            case "requested":
+                requests = friendshipService.getReceivedRequests(userEmail);
+                break;
+            default:
+                throw new IllegalArgumentException("유효하지 않은 상태 값입니다. (accepted, pending, requested 중 하나를 사용하세요)");
+        }
 
-    @GetMapping("/followers")
-    public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFollowerList(
-        @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
-
-        User user = userService.findUserByEmail(extractEmailFromToken(accessToken));
-        List<FriendshipStatusDTO> followerList = friendshipService.getFollowerList(user);
-
-        return ResponseEntity.ok(new BaseResponse<>(true, "팔로워 목록 조회 성공", 200, followerList));
+        return ResponseEntity.ok(requests);
     }
 
     @DeleteMapping("/reject")
@@ -128,25 +135,6 @@ public class FriendshipController {
         }
     }
 
-        @GetMapping("/pending-requests")
-        public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getPendingRequests(
-            @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
-
-            String userEmail = extractEmailFromToken(accessToken);
-            List<FriendshipStatusDTO> pendingRequests = friendshipService.getPendingRequests(userEmail);
-
-            return ResponseEntity.ok(new BaseResponse<>(true, "보낸 친구 요청 목록 조회 성공", 200, pendingRequests));
-        }
-
-        @GetMapping("/friendlist")
-        public ResponseEntity<BaseResponse<List<FriendshipStatusDTO>>> getFriendList(
-            @RequestHeader("ACCESS-AUTH-KEY") String accessToken) {
-
-            String userEmail = extractEmailFromToken(accessToken);
-            List<FriendshipStatusDTO> friends = friendshipService.getFriendList(userEmail);
-
-            return ResponseEntity.ok(new BaseResponse<>(true, "친구 목록 조회 성공", 200, friends));
-        }
     @DeleteMapping("/cancel-request")
     public ResponseEntity<BaseResponse<String>> cancelFriendRequest(
         @RequestHeader("ACCESS-AUTH-KEY") String accessToken,
@@ -166,5 +154,4 @@ public class FriendshipController {
             return ResponseEntity.badRequest().body(new BaseResponse<>(false, "취소할 친구 요청이 없습니다.", 400, null));
         }
     }
-
 }
