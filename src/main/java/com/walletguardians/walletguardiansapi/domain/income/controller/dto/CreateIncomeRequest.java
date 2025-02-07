@@ -10,16 +10,17 @@ import lombok.Getter;
 public class CreateIncomeRequest {
 
   private int amount;
+  private LocalDate date;
   private String category;
   private String description;
 
-  public Income toEntity(User user, LocalDate date){
+  public Income toEntity(User user){
     return Income.builder()
         .amount(amount)
         .category(category)
         .description(description)
-        .user(user)
         .date(date)
+        .user(user)
         .build();
   }
 

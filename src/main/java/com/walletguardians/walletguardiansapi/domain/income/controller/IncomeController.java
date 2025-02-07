@@ -32,12 +32,11 @@ public class IncomeController {
   private final IncomeService incomeService;
   private final BaseResponseService baseResponseService;
 
-  @PostMapping("/day")
+  @PostMapping()
   public ResponseEntity<BaseResponse<Void>> createIncome(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestBody CreateIncomeRequest createIncomeRequest) {
-    incomeService.createIncome(createIncomeRequest, customUserDetails, date);
+    incomeService.createIncome(createIncomeRequest, customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
