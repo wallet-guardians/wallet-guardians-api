@@ -26,22 +26,21 @@ public class ExpenseController {
   private final ExpenseService expenseService;
   private final BaseResponseService baseResponseService;
 
-  @PostMapping("/day")
+  @PostMapping()
   public ResponseEntity<BaseResponse<Void>> createExpense(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
       @RequestBody CreateExpenseRequest createExpenseRequest,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    expenseService.createExpense(createExpenseRequest, customUserDetails, date);
+    expenseService.createExpense(createExpenseRequest, customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
   @GetMapping("/month")
-  public ResponseEntity<BaseResponse<List<Expense>>> getMonthlyExpenses(
+  public ResponseEntity<BaseResponse<List<Expense>>> getExpensesByMonth(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestParam int year,
       @RequestParam int month
   ) {
-    List<Expense> expenses = expenseService.getMonthlyExpenses(customUserDetails, year, month);
+    List<Expense> expenses = expenseService.getExpensesByMonth(customUserDetails, year, month);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(expenses));
   }
 

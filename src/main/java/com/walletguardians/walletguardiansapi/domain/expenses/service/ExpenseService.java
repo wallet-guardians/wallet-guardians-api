@@ -31,14 +31,14 @@ public class ExpenseService {
 
   @Transactional
   public void createExpense(CreateExpenseRequest createExpenseRequest,
-      CustomUserDetails customUserDetails, LocalDate date) {
+      CustomUserDetails customUserDetails) {
     User user = customUserDetails.getUser();
-    Expense expense = createExpenseRequest.toEntity(user, date);
+    Expense expense = createExpenseRequest.toEntity(user);
     expenseRepository.save(expense);
   }
 
   @Transactional(readOnly = true)
-  public List<Expense> getMonthlyExpenses(CustomUserDetails customUserDetails, int year,
+  public List<Expense> getExpensesByMonth(CustomUserDetails customUserDetails, int year,
       int month) {
     Long userId = customUserDetails.getUserId();
 
@@ -46,6 +46,20 @@ public class ExpenseService {
     LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
 
     return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, startOfMonth, endOfMonth);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
+    Long userId = customUserDetails.getUserId();
+    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date, date);
+  }
+
+  @Transactional(readOnly = true)
+  public Expense getExpenseById(CustomUserDetails customUserDetails, Long expenseId) {
+    Long userId = customUserDetails.getUserId();
+
+    return expenseRepository.findByIdAndUserId(expenseId, userId)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
   }
 
   @Transactional
@@ -71,20 +85,6 @@ public class ExpenseService {
 
   public void uploadReceipt(MultipartFile receiptFile, CreateReceiptRequest dto, String email) {
     cloudStorageService.uploadPicture(receiptFile, "receipts", dto, email, LocalDate.now());
-  }
-
-  @Transactional(readOnly = true)
-  public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
-    Long userId = customUserDetails.getUserId();
-    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date, date);
-  }
-
-  @Transactional(readOnly = true)
-  public Expense getExpenseById(CustomUserDetails customUserDetails, Long expenseId) {
-    Long userId = customUserDetails.getUserId();
-
-    return expenseRepository.findByIdAndUserId(expenseId, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
   }
 
 }
