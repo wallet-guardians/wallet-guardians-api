@@ -23,9 +23,9 @@ public class IncomeService {
 
   @Transactional
   public void createIncome(CreateIncomeRequest createIncomeRequest,
-      CustomUserDetails customUserDetails, LocalDate date) {
+      CustomUserDetails customUserDetails) {
     User user = customUserDetails.getUser();
-    Income income = createIncomeRequest.toEntity(user, date);
+    Income income = createIncomeRequest.toEntity(user);
     incomeRepository.save(income);
   }
 

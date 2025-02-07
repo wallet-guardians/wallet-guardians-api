@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,12 +31,11 @@ public class IncomeController {
   private final IncomeService incomeService;
   private final BaseResponseService baseResponseService;
 
-  @PostMapping("/day")
+  @PostMapping()
   public ResponseEntity<BaseResponse<Void>> createIncome(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestBody CreateIncomeRequest createIncomeRequest) {
-    incomeService.createIncome(createIncomeRequest, customUserDetails, date);
+    incomeService.createIncome(createIncomeRequest, customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
