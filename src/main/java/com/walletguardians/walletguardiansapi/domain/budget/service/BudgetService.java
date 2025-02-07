@@ -43,4 +43,10 @@ public class BudgetService {
     budget.updateBudget(updateBudgetRequest.getAmount());
   }
 
+  @Transactional
+  public void deleteBudget(CustomUserDetails customUserDetails) {
+    Budget findBudget = budgetRepository.findByUser(customUserDetails.getUser()).orElseThrow(()->new BaseException(BaseResponseStatus.NO_BUDGET));
+    budgetRepository.delete(findBudget);
+  }
+
 }
