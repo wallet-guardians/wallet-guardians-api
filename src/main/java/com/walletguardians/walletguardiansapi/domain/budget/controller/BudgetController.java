@@ -11,6 +11,7 @@ import com.walletguardians.walletguardiansapi.global.response.BaseResponseServic
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,6 +44,13 @@ public class BudgetController {
   public ResponseEntity<BaseResponse<Void>> updateBudget(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody
       UpdateBudgetRequest updateBudgetRequest){
     budgetService.updateBudget(customUserDetails, updateBudgetRequest);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
+
+
+  @DeleteMapping()
+  public ResponseEntity<BaseResponse<Void>> deleteBudget(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    budgetService.deleteBudget(customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
