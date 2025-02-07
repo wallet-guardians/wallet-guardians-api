@@ -10,23 +10,45 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface FriendshipStatusRepository extends JpaRepository<FriendshipStatus, Long> {
 
     List<FriendshipStatus> findBySender(User sender);
+
     List<FriendshipStatus> findByReceiver(User receiver);
+
     Optional<FriendshipStatus> findBySenderAndReceiver(User sender, User receiver);
 
-    @Query("SELECT f FROM FriendshipStatus f WHERE f.sender.email = :senderEmail AND f.receiver.email = :receiverEmail")
-    Optional<FriendshipStatus> findBySenderAndReceiverEmail(@Param("senderEmail") String senderEmail, @Param("receiverEmail") String receiverEmail);
+    @Query("SELECT f FROM FriendshipStatus f " +
+        "WHERE f.sender.email = :senderEmail AND f.receiver.email = :receiverEmail")
+    Optional<FriendshipStatus> findBySenderAndReceiverEmail(
+        @Param("senderEmail") String senderEmail,
+        @Param("receiverEmail") String receiverEmail
+    );
 
-    @Modifying
-    @Query("UPDATE FriendshipStatus f SET f.friendshipStatus = 'ACCEPTED' WHERE f.sender = :sender AND f.receiver = :receiver")
-    void acceptFriendRequest(@Param("sender") User sender, @Param("receiver") User receiver);
+    @Query("SELECT f FROM FriendshipStatus f " +
+        "WHERE f.sender.email = :userEmail " +
+        "AND f.friendshipStatus = :status")
+    List<FriendshipStatus> findPendingRequestsBySender(
+        @Param("userEmail") String userEmail,
+        @Param("status") FriendshipStatusEnum status
+    );
 
-    @Modifying
-    @Query("DELETE FROM FriendshipStatus f WHERE f.sender = :sender AND f.receiver = :receiver")
-    void rejectFriendRequest(@Param("sender") User sender, @Param("receiver") User receiver);
+    @Query("SELECT f FROM FriendshipStatus f " +
+        "WHERE f.receiver.email = :userEmail " +
+        "AND f.friendshipStatus = :status")
+    List<FriendshipStatus> findPendingRequestsByReceiver(
+        @Param("userEmail") String userEmail,
+        @Param("status") FriendshipStatusEnum status
+    );
 
-    @Modifying
-    @Query("DELETE FROM FriendshipStatus f WHERE (f.sender = :user1 AND f.receiver = :user2) OR (f.sender = :user2 AND f.receiver = :user1)")
-    void deleteFriendship(@Param("user1") User user1, @Param("user2") User user2);}
+    @Query("SELECT f FROM FriendshipStatus f " +
+        "WHERE (f.sender.email = :userEmail OR f.receiver.email = :userEmail) " +
+        "AND f.friendshipStatus = :status")
+    List<FriendshipStatus> findAcceptedFriends(
+        @Param("userEmail") String userEmail,
+        @Param("status") FriendshipStatusEnum status
+    );
+}

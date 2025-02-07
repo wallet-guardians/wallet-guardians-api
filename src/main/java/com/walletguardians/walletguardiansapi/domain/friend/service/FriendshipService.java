@@ -5,17 +5,21 @@ import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipSta
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendshipStatusRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
+import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FriendshipService {
 
     private final FriendshipStatusRepository friendshipStatusRepository;
+    private final UserService userService;
 
     @Transactional
     public FriendshipStatusDTO sendFriendRequest(User sender, User receiver) {
@@ -29,23 +33,55 @@ public class FriendshipService {
             .friendshipStatus(FriendshipStatusEnum.PENDING)
             .build();
 
-        FriendshipStatus savedStatus = friendshipStatusRepository.save(friendshipStatus);
-        return new FriendshipStatusDTO(savedStatus);
+        friendshipStatusRepository.save(friendshipStatus);
+        return convertToDTO(friendshipStatus);
     }
 
     @Transactional
     public boolean acceptFriendRequest(String receiverEmail, String senderEmail) {
-        Optional<FriendshipStatus> friendshipStatusOpt = friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail);
+        return friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail)
+            .map(friendship -> {
+                friendship.updateFriendshipStatus(FriendshipStatusEnum.ACCEPTED);
+                friendshipStatusRepository.save(friendship);
+                return true;
+            })
+            .orElse(false);
+    }
 
-        if (friendshipStatusOpt.isEmpty()) {
-            return false;
+    @Transactional
+    public boolean rejectFriendRequest(String receiverEmail, String senderEmail) {
+        return friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail)
+            .map(friendship -> {
+                friendshipStatusRepository.delete(friendship);
+                return true;
+            })
+            .orElse(false);
+    }
+
+    @Transactional
+    public boolean deleteFriendship(String userEmail, String targetEmail) {
+        Optional<FriendshipStatus> friendship = friendshipStatusRepository.findBySenderAndReceiverEmail(userEmail, targetEmail);
+
+        if (friendship.isPresent()) {
+            friendshipStatusRepository.delete(friendship.get());
+            return true;
         }
 
-        FriendshipStatus friendshipStatus = friendshipStatusOpt.get();
-        friendshipStatus.updateFriendshipStatus(FriendshipStatusEnum.ACCEPTED);
-        friendshipStatusRepository.save(friendshipStatus);
+        Optional<FriendshipStatus> reverseFriendship = friendshipStatusRepository.findBySenderAndReceiverEmail(targetEmail, userEmail);
+        if (reverseFriendship.isPresent()) {
+            friendshipStatusRepository.delete(reverseFriendship.get());
+            return true;
+        }
 
-        return true;
+        return false;
+    }
+
+    @Transactional(readOnly = true)
+    public List<FriendshipStatusDTO> getAcceptedFriends(String userEmail) {
+        return friendshipStatusRepository.findAcceptedFriends(userEmail, FriendshipStatusEnum.ACCEPTED)
+            .stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
     }
 
     @Transactional
@@ -84,19 +120,39 @@ public class FriendshipService {
 
 
     @Transactional(readOnly = true)
-    public List<FriendshipStatusDTO> getFollowingList(User user) {
-        return friendshipStatusRepository.findBySender(user)
+    public List<FriendshipStatusDTO> getPendingRequests(String userEmail) {
+        return friendshipStatusRepository.findPendingRequestsBySender(userEmail, FriendshipStatusEnum.PENDING)
             .stream()
-            .distinct()
-            .map(FriendshipStatusDTO::fromEntity)
-            .toList();
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<FriendshipStatusDTO> getFollowerList(User user) {
-        return friendshipStatusRepository.findByReceiver(user)
+    public List<FriendshipStatusDTO> getReceivedRequests(String userEmail) {
+        return friendshipStatusRepository.findPendingRequestsByReceiver(userEmail, FriendshipStatusEnum.PENDING)
             .stream()
-            .map(FriendshipStatusDTO::fromEntity)
-            .toList();
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public boolean cancelFriendRequest(String senderEmail, String receiverEmail) {
+        return friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail)
+            .filter(friendship -> friendship.getFriendshipStatus() == FriendshipStatusEnum.PENDING)
+            .map(friendship -> {
+                friendshipStatusRepository.delete(friendship);
+                return true;
+            })
+            .orElse(false);
+    }
+
+    private FriendshipStatusDTO convertToDTO(FriendshipStatus friendship) {
+        return new FriendshipStatusDTO(
+            friendship.getId(),
+            friendship.getSender().getEmail(),
+            friendship.getReceiver().getEmail(),
+            friendship.getReceiver().getUsername(),
+            friendship.getFriendshipStatus()
+        );
     }
 }
