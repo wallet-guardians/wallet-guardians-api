@@ -84,6 +84,41 @@ public class FriendshipService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
+    public boolean rejectFriendRequest(String receiverEmail, String senderEmail) {
+        Optional<FriendshipStatus> friendshipStatusOpt = friendshipStatusRepository.findBySenderAndReceiverEmail(senderEmail, receiverEmail);
+
+        if (friendshipStatusOpt.isEmpty()) {
+            return false;
+        }
+
+        FriendshipStatus friendshipStatus = friendshipStatusOpt.get();
+        friendshipStatusRepository.delete(friendshipStatus); // 요청을 삭제
+
+        return true;
+    }
+
+    @Transactional
+    public boolean deleteFriendship(String userEmail, String targetEmail) {
+        Optional<FriendshipStatus> friendship = friendshipStatusRepository.findBySenderAndReceiverEmail(userEmail, targetEmail);
+
+        if (friendship.isPresent()) {
+            friendshipStatusRepository.delete(friendship.get());
+            return true;
+        }
+
+        // 반대 방향의 친구 관계 확인 쌍방 삭제 가능
+        Optional<FriendshipStatus> reverseFriendship = friendshipStatusRepository.findBySenderAndReceiverEmail(targetEmail, userEmail);
+        if (reverseFriendship.isPresent()) {
+            friendshipStatusRepository.delete(reverseFriendship.get());
+            return true;
+        }
+
+        return false;
+    }
+
+
+
     @Transactional(readOnly = true)
     public List<FriendshipStatusDTO> getPendingRequests(String userEmail) {
         return friendshipStatusRepository.findPendingRequestsBySender(userEmail, FriendshipStatusEnum.PENDING)
