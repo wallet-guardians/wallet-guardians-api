@@ -13,13 +13,15 @@ public class CreateExpenseRequest {
 
   private int amount;
 
+  private LocalDate date;
+
   private String category;
 
   private String description;
 
   private String storeName;
 
-  public Expense toEntity(User user, LocalDate date) {
+  public Expense toEntity(User user) {
     return Expense.builder()
         .amount(amount)
         .category(category)
