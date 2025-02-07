@@ -69,6 +69,16 @@ public class ExpenseController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
+  @PutMapping("/{expenseId}")
+  public ResponseEntity<BaseResponse<Void>> updateExpense(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long expenseId,
+      @RequestBody UpdateExpenseRequest updateExpenseRequest) {
+
+    expenseService.updateExpense(expenseId, updateExpenseRequest, customUserDetails);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse());
+  }
+
   @PostMapping("/receipt")
   public ResponseEntity<BaseResponse<Void>> saveFile(
       @RequestPart(value = "file") MultipartFile file,
@@ -78,16 +88,6 @@ public class ExpenseController {
     // expenseService.createReceiptExpense(file, dto);
 
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
-  }
-
-  @PutMapping("/{expenseId}")
-  public ResponseEntity<BaseResponse<Void>> updateExpense(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails,
-      @PathVariable Long expenseId,
-      @RequestBody UpdateExpenseRequest updateExpenseRequest) {
-
-    expenseService.updateExpense(expenseId, updateExpenseRequest, customUserDetails);
-    return ResponseEntity.ok(baseResponseService.getSuccessResponse());
   }
 
 }
