@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/budget")
 public class BudgetController {
 
-  private final UserService userService;
   private final BudgetService budgetService;
   private final BaseResponseService baseResponseService;
 
