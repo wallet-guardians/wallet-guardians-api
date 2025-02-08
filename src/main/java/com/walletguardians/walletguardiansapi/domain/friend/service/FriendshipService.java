@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class FriendshipService {
 
   private final FriendshipStatusRepository friendshipStatusRepository;
-  private final UserService userService;
 
   @Transactional
   public FriendshipStatusDTO sendFriendRequest(User sender, User receiver) {
