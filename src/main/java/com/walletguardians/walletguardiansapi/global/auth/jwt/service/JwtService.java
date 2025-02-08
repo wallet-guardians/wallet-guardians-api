@@ -49,8 +49,8 @@ public class JwtService {
   private final RefreshTokenRepository refreshTokenRepository;
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-  private static final long ACCESS_TIME = 10 * 60 * 1000L; //10분
-  private static final long REFRESH_TIME = 20 + 60 * 1000L;
+  private static final long ACCESS_TIME = 30 * 60 * 1000L; //30분
+  private static final long REFRESH_TIME = 40 * 60 * 1000L;
 
   @PostConstruct
   protected void init() {
