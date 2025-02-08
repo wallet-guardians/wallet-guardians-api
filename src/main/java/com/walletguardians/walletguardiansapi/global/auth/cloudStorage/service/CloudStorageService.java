@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CloudStorageService {
 
   private final Storage storage;
-  private final UserRepository userRepository;
 
   @Value("${spring.cloud.gcp.storage.bucket}")
   private String bucketName;

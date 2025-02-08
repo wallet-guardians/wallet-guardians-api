@@ -13,6 +13,7 @@ public enum BaseResponseStatus {
   EXIST_BUDGET(false, 4005, "이미 예산이 설정되어 있습니다", 409),
   NO_BUDGET(false, 4006, "예산 정보가 없습니다.", 409),
   NO_EXPENSES(false, 4007, "지출 내역이 없습니다.", 409),
+  NO_INCOME(false, 4008, "수입 내역이 없습니다.", 409),
   INTERNAL_SERVER_ERROR(false, 5000, "서버 내부 오류가 발생했습니다.", 500);
 
   // 필드 정의

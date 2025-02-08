@@ -61,7 +61,7 @@ public class ExpenseService {
     return expenseRepository.findByIdAndUserId(expenseId, userId)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
   }
-
+  
   @Transactional
   public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest,
       CustomUserDetails customUserDetails) {

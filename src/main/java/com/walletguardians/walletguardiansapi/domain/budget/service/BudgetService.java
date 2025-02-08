@@ -48,5 +48,5 @@ public class BudgetService {
     Budget findBudget = budgetRepository.findByUser(customUserDetails.getUser()).orElseThrow(()->new BaseException(BaseResponseStatus.NO_BUDGET));
     budgetRepository.delete(findBudget);
   }
-
+  
 }
