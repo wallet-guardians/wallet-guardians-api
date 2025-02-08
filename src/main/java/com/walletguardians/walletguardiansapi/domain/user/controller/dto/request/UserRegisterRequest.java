@@ -1,4 +1,4 @@
-package com.walletguardians.walletguardiansapi.domain.user.dto.request;
+package com.walletguardians.walletguardiansapi.domain.user.controller.dto.request;
 
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
