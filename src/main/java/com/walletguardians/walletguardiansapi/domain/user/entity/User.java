@@ -60,4 +60,13 @@ public class User {
   public boolean isPasswordValid(PasswordEncoder passwordEncoder, String password) {
     return passwordEncoder.matches(password, this.password);
   }
+
+  public void updateUsername(String username) {
+    this.username = username;
+  }
+
+  public void updateTitle(String title) {
+    this.title = title;
+  }
+
 }

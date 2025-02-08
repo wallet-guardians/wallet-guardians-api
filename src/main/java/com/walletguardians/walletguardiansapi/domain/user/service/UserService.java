@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.domain.user.service;
 
+import com.walletguardians.walletguardiansapi.domain.user.dto.request.UserUpdateRequest;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,18 @@ public class UserService {
   public User findUserByEmail(String email) {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new IllegalArgumentException("해당하는 이메일 정보가 없습니다."));
+  }
+
+  @Transactional
+  public User updateUserProfile(String email, UserUpdateRequest request) {
+    User user = findUserByEmail(email);
+    if (request.getUsername() != null) {
+      user.updateUsername(request.getUsername());
+    }
+    if (request.getTitle() != null) {
+      user.updateTitle(request.getTitle());
+    }
+    return userRepository.save(user);
   }
 
 }
