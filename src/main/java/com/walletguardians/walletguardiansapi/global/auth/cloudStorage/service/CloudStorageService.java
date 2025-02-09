@@ -7,10 +7,10 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
+import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.nio.ByteBuffer;
-import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +30,15 @@ public class CloudStorageService {
   private String bucketName;
 
   public void uploadPicture(MultipartFile pictureFile, String pictureType, CreateReceiptRequest dto,
-      String email, LocalDate date) {
+      CustomUserDetails customUserDetails) {
     if (pictureFile.isEmpty()) {
       throw new IllegalArgumentException("Picture is empty");
     }
-
-    String uniqueFileName = UUID.randomUUID().toString() + "_" + pictureFile.getOriginalFilename();
-    String filePath = email + "/" + pictureType + "/" + date + "/" + uniqueFileName;
+    String userEmail = customUserDetails.getUsername();
+    String uniqueFileName = UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
+    String filePath =
+        userEmail + "/" + pictureType + "/" + dto.getDate() + "/"
+            + uniqueFileName;
     String contentType = pictureFile.getContentType();
 
     BlobId blobId = BlobId.of(bucketName, filePath);
@@ -48,7 +50,7 @@ public class CloudStorageService {
       byte[] fileData = pictureFile.getBytes();
       writer.write(ByteBuffer.wrap(fileData));
     } catch (Exception e) {
-      log.error("Failed to upload picture for user {}: {}", email, e.getMessage(), e);
+      log.error("Failed to upload picture for user {}: {}", userEmail, e.getMessage(), e);
       throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
     }
 

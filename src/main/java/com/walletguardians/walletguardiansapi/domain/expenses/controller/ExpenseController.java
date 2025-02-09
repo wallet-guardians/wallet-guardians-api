@@ -11,7 +11,6 @@ import com.walletguardians.walletguardiansapi.global.response.BaseResponseServic
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +25,11 @@ public class ExpenseController {
   private final ExpenseService expenseService;
   private final BaseResponseService baseResponseService;
 
-  @PostMapping("/day")
+  @PostMapping()
   public ResponseEntity<BaseResponse<Void>> createExpense(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
       @RequestBody CreateExpenseRequest createExpenseRequest,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    expenseService.createExpense(createExpenseRequest, customUserDetails, date);
+    expenseService.createExpense(createExpenseRequest, customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
@@ -41,7 +39,7 @@ public class ExpenseController {
       @RequestParam int year,
       @RequestParam int month
   ) {
-    List<Expense> expenses = expenseService.getMonthlyExpenses(customUserDetails, year, month);
+    List<Expense> expenses = expenseService.getExpensesByMonth(customUserDetails, year, month);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(expenses));
   }
 
@@ -74,7 +72,7 @@ public class ExpenseController {
       @RequestPart(value = "file") MultipartFile file,
       @RequestPart(value = "info") CreateReceiptRequest dto,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    expenseService.uploadReceipt(file, dto, customUserDetails.getUsername());
+    expenseService.uploadReceipt(file, dto, customUserDetails);
     // expenseService.createReceiptExpense(file, dto);
 
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());

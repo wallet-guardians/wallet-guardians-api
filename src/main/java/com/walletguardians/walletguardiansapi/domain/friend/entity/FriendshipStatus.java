@@ -7,7 +7,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Table(name = "FRIENDSHIP_STATUS")
+@Table(name = "friendship_status")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FriendshipStatus {
 
@@ -38,6 +38,19 @@ public class FriendshipStatus {
     }
 
     public void updateFriendshipStatus(FriendshipStatusEnum status) {
+        if (this.friendshipStatus == FriendshipStatusEnum.ACCEPTED) {
+            throw new IllegalStateException("이미 친구 상태입니다.");
+        }
         this.friendshipStatus = status;
+    }
+
+    //친구 요청이 PENDING 상태인지 확인
+    public boolean isPending() {
+        return this.friendshipStatus == FriendshipStatusEnum.PENDING;
+    }
+
+    //친구 상태가 ACCEPTED인지 확인
+    public boolean isAccepted() {
+        return this.friendshipStatus == FriendshipStatusEnum.ACCEPTED;
     }
 }

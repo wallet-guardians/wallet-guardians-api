@@ -4,12 +4,10 @@ import com.walletguardians.walletguardiansapi.domain.budget.controller.dto.Budge
 import com.walletguardians.walletguardiansapi.domain.budget.controller.dto.UpdateBudgetRequest;
 import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.budget.service.BudgetService;
-import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
 import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,19 +18,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/budget")
 public class BudgetController {
 
-  private final UserService userService;
   private final BudgetService budgetService;
   private final BaseResponseService baseResponseService;
 
   @PostMapping()
   public ResponseEntity<BaseResponse<Budget>> createBudget(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody BudgetRequest budgetRequest){
-    log.info("User ID: {}", customUserDetails.getUserId());
     Budget budget = budgetService.createBudget(customUserDetails.getUserId(), budgetRequest);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(budget));
   }
@@ -49,7 +44,6 @@ public class BudgetController {
     budgetService.updateBudget(customUserDetails, updateBudgetRequest);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
-
 
   @DeleteMapping()
   public ResponseEntity<BaseResponse<Void>> deleteBudget(@AuthenticationPrincipal CustomUserDetails customUserDetails){

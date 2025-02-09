@@ -10,11 +10,9 @@ import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BudgetService {
@@ -28,7 +26,6 @@ public class BudgetService {
         .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_BUDGET));
     Budget budget = budgetRequest.toEntity();
     budget.setUser(user);
-    log.info("Budget Created - User ID: {}", user.getId());
     budgetRepository.save(budget);
     return budget;
   }
