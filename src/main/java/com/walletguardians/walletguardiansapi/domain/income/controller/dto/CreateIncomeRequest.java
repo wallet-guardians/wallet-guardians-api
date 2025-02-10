@@ -3,7 +3,6 @@ package com.walletguardians.walletguardiansapi.domain.income.controller.dto;
 import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import java.time.LocalDate;
-import jdk.jfr.Category;
 import lombok.Getter;
 
 @Getter
