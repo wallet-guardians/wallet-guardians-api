@@ -4,7 +4,7 @@ import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.reque
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.request.FriendReceiverRequest;
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.FriendResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatusEnum;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;

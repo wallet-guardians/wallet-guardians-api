@@ -1,6 +1,7 @@
 package com.walletguardians.walletguardiansapi.domain.friend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

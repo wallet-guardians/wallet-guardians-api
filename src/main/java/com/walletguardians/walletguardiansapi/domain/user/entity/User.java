@@ -68,14 +68,6 @@ public class User {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Income> incomes;
 
-  @JsonIgnore
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Budget budget;
-
-  @JsonIgnore
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Income> incomes;
-
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }

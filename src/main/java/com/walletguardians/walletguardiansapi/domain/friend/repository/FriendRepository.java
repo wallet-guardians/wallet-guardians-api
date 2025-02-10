@@ -1,7 +1,7 @@
 package com.walletguardians.walletguardiansapi.domain.friend.repository;
 
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatusEnum;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
