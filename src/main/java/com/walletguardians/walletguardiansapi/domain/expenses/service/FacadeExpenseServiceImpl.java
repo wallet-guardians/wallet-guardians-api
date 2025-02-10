@@ -4,6 +4,9 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
+import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -20,7 +23,8 @@ public class FacadeExpenseServiceImpl implements FacadeExpenseService {
 
     private final ExpenseService expenseService;
     private final ReceiptExpenseService receiptExpenseService;
-    private final ReceiptExpenseServiceImpl receiptExpenseServiceImpl;
+    private final OcrService ocrService;
+
 
 
     @Transactional
@@ -63,7 +67,9 @@ public class FacadeExpenseServiceImpl implements FacadeExpenseService {
     @Override
     public void createReceiptExpense(MultipartFile file, CreateReceiptRequest dto, CustomUserDetails customUserDetails)
             throws IOException {
-        receiptExpenseService.uploadReceipt(file, dto, customUserDetails);
-        receiptExpenseService.createReceiptExpense(file, dto);
+        User user = customUserDetails.getUser();
+        FileInfo fileInfo = receiptExpenseService.uploadReceipt(file, dto, customUserDetails);
+        OcrResponse ocrResponse = ocrService.sendOcrRequest(fileInfo.getContentType(), fileInfo.getFilePath());
+        receiptExpenseService.createReceiptExpense(fileInfo, ocrResponse, dto, user);
     }
 }
