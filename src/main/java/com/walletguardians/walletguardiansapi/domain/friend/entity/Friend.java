@@ -7,9 +7,9 @@ import lombok.*;
 
 @Entity
 @Getter
-@Table(name = "friendship_status")
+@Table(name = "friend")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FriendshipStatus {
+public class Friend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,30 +27,27 @@ public class FriendshipStatus {
     private User receiver;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "friendship_status", nullable = false)
-    private FriendshipStatusEnum friendshipStatus;
+    @Column(name = "friend_status", nullable = false)
+    private FriendStatusEnum friendStatus;
 
     @Builder
-    public FriendshipStatus(User sender, User receiver, FriendshipStatusEnum friendshipStatus) {
+    public Friend(User sender, User receiver, FriendStatusEnum friendStatus) {
         this.sender = sender;
         this.receiver = receiver;
-        this.friendshipStatus = friendshipStatus;
+        this.friendStatus = friendStatus;
     }
 
-    public void updateFriendshipStatus(FriendshipStatusEnum status) {
-        if (this.friendshipStatus == FriendshipStatusEnum.ACCEPTED) {
-            throw new IllegalStateException("이미 친구 상태입니다.");
-        }
-        this.friendshipStatus = status;
+    public void updateFriendStatus(FriendStatusEnum status) {
+        this.friendStatus = status;
     }
 
     //친구 요청이 PENDING 상태인지 확인
     public boolean isPending() {
-        return this.friendshipStatus == FriendshipStatusEnum.PENDING;
+        return this.friendStatus == FriendStatusEnum.PENDING;
     }
 
     //친구 상태가 ACCEPTED인지 확인
     public boolean isAccepted() {
-        return this.friendshipStatus == FriendshipStatusEnum.ACCEPTED;
+        return this.friendStatus == FriendStatusEnum.ACCEPTED;
     }
 }
