@@ -26,7 +26,8 @@ public interface FacadeExpenseService {
 
     void deleteExpense(Long id, CustomUserDetails customUserDetails);
 
-    void createReceiptExpense(MultipartFile file, CreateReceiptRequest dto, CustomUserDetails customUserDetails) throws IOException;
+    void createReceiptExpense(MultipartFile file, CreateReceiptRequest dto, CustomUserDetails customUserDetails)
+            throws IOException;
 
 
 }

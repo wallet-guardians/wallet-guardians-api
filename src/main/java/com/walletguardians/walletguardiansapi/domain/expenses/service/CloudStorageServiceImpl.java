@@ -47,7 +47,12 @@ public class CloudStorageServiceImpl implements CloudStorageService {
             replaceReceiptMetadata(filePath, dto);
         }
 
-        return createFileInfo(filePath, contentType);
+        return createFileInfo(filePath, getFileFormat(pictureFile));
+    }
+
+    private String getFileFormat(MultipartFile pictureFile) {
+        String contentType = pictureFile.getContentType();
+        return contentType.split("/")[1];
     }
 
     @Transactional
