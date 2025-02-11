@@ -35,7 +35,7 @@ public class ExpenseController {
   }
 
   @GetMapping("/month")
-  public ResponseEntity<BaseResponse<List<Expense>>> getMonthlyExpenses(
+  public ResponseEntity<BaseResponse<List<Expense>>> getExpensesByMonth(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestParam int year,
       @RequestParam int month
