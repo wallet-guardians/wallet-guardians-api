@@ -37,7 +37,8 @@ public class BudgetService {
   }
 
   @Transactional
-  public void updateBudget(CustomUserDetails customUserDetails, UpdateBudgetRequest updateBudgetRequest) {
+  public void updateBudget(CustomUserDetails customUserDetails,
+      UpdateBudgetRequest updateBudgetRequest) {
     Budget budget = budgetRepository.findByUser(customUserDetails.getUser())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_BUDGET));
     budget.updateBudget(updateBudgetRequest.getAmount());
@@ -45,7 +46,8 @@ public class BudgetService {
 
   @Transactional
   public void deleteBudget(CustomUserDetails customUserDetails) {
-    Budget findBudget = budgetRepository.findByUser(customUserDetails.getUser()).orElseThrow(()->new BaseException(BaseResponseStatus.NO_BUDGET));
+    Budget findBudget = budgetRepository.findByUser(customUserDetails.getUser())
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_BUDGET));
     budgetRepository.delete(findBudget);
   }
 
