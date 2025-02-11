@@ -16,7 +16,7 @@ public enum BaseResponseStatus {
   NO_EXPENSES(false, 4007, "지출 내역이 없습니다.", 409),
   NO_INCOME(false, 4008, "수입 내역이 없습니다.", 409),
   ALREADY_FRIEND_REQUEST_SENT_OR_FRIEND(false, 4009, "이미 존재하는 친구요청이거나 친구입니다.", 409),
-  ALREADY_ACCEPTED(false, 4010, "이미 수락한 친구입니다.", 409),
+  ALREADY_REJECTED(false, 4010, "이미 거절된 친구입니다.", 409),
   NO_FRIEND(false, 4011, "존재하지 않는 친구입니다.", 404),
   INVALID_FRIEND_STATUS(false, 4012, "잘못된 친구 요청 상태입니다.", 400),
   CAN_NOT_SEND_YOURSELF(false, 4013, "본인에게는 보낼 수 없습니다.", 409),
