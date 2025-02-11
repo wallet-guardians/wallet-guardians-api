@@ -14,7 +14,6 @@ import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.List;
 
 @Entity
@@ -42,8 +41,9 @@ public class User {
   @Default
   private String title = "";
 
-  @Column(nullable = false, name = "defense_rate")
-  private float defenseRate = 0;
+  @Default
+  @Column(nullable = false, name = "defense")
+  private int defense = 60;
 
   @Enumerated(EnumType.STRING)
   private Role role;
@@ -80,4 +80,11 @@ public class User {
     this.password = passwordEncoder.encode(newPassword);
   }
 
+  public void decreaseDefense(int defense) {
+    this.defense -= defense;
+  }
+
+  public void increaseDefense(int defense) {
+    this.defense += defense;
+  }
 }
