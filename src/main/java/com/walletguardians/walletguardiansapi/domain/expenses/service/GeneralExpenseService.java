@@ -1,9 +1,12 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
@@ -18,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ExpenseServiceImpl implements ExpenseService {
+public class GeneralExpenseService implements ExpenseService {
 
     private final ExpenseRepository expenseRepository;
 
@@ -70,5 +73,13 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Transactional
     public void deleteExpense(Expense findExpense) {
         expenseRepository.delete(findExpense);
+    }
+
+    @Transactional
+    @Override
+    public void createReceiptExpense(FileInfo fileInfo, OcrResponse ocrResponse,
+            CreateReceiptRequest createReceiptRequest, User user) {
+        Expense expense = createReceiptRequest.toEntity(fileInfo, ocrResponse, user);
+        expenseRepository.save(expense);
     }
 }
