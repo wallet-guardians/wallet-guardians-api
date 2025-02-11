@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,17 +47,19 @@ public class FriendStatusService {
   @Transactional
   public void acceptFriendRequest(CustomUserDetails customUserDetails,
       Long friendStatusId) {
-    FriendStatus foundFriendStatus = friendStatusRepository.findByIdAndReceiver(friendStatusId,
-            customUserDetails.getUser())
+    User user = customUserDetails.getUser();
+    FriendStatus foundFriendStatus = friendStatusRepository.findByIdAndReceiver(friendStatusId, user)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_FRIEND_REQUEST));
+
+    User friend = foundFriendStatus.getSender();
 
     if (foundFriendStatus.getFriendStatus().equals(FriendStatusEnum.REJECTED)) {
       throw new BaseException(BaseResponseStatus.ALREADY_REJECTED);
     }
-    Friend friendEntity = friendService.createFriendEntity(customUserDetails.getUser(),
-        foundFriendStatus.getSender());
+
+    this.saveFriend(user, friend);
+    this.saveFriend(friend, user);
     friendStatusRepository.delete(foundFriendStatus);
-    friendRepository.save(friendEntity);
   }
 
   @Transactional
@@ -98,7 +99,7 @@ public class FriendStatusService {
     return friendStatusRepository.findBySender(customUserDetails.getUser())
         .stream()
         .map(SenderResponse::fromEntity)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private void checkFriendStatusAndFriendExists(User user, User friend) {
@@ -115,7 +116,7 @@ public class FriendStatusService {
   }
 
   private void checkFriendExists(User user, User friend) {
-    boolean exists = friendRepository.existsByUserAndFriend(user, friend);
+    boolean exists = friendRepository.existsByUserEntityAndFriendEntity(user, friend);
     if (exists) {
       throw new BaseException(BaseResponseStatus.ALREADY_FRIEND_REQUEST_SENT_OR_FRIEND);
     }
@@ -127,6 +128,11 @@ public class FriendStatusService {
         .receiver(receiver)
         .friendStatus(FriendStatusEnum.PENDING)
         .build();
+  }
+
+  private void saveFriend(User user, User friend){
+    Friend friendEntity = friendService.createFriendEntity(user, friend);
+    friendRepository.save(friendEntity);
   }
 
 }

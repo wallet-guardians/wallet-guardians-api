@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-  List<Friend> findByUser(User user);
+  List<Friend> findByUserEntity(User user);
 
-  boolean existsByUserAndFriend(User user, User friend);
+  boolean existsByUserEntityAndFriendEntity(User userEntity, User friendEntity);
 
-  Optional<Friend> findByIdAndUser(Long id, User user);
+  Optional<Friend> findByIdAndUserEntity(Long id, User userEntity);
+
+  void deleteByUserEntityAndFriendEntity(User user, User friend);
 }

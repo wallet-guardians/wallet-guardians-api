@@ -2,31 +2,27 @@ package com.walletguardians.walletguardiansapi.domain.friend.controller.dto.resp
 
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class FriendResponse {
 
   private Long friendListId;
-  private String email;
+  private String friendEmail;
   private String friendName;
 
-  public FriendResponse(Friend friend) {
-    this.friendListId = friend.getId();
-    this.email = friend.getFriend().getEmail();
-    this.friendName = friend.getFriend().getUsername();
-  }
-
   public static FriendResponse fromEntity(Friend friend) {
-    return new FriendResponse(
-        friend.getId(),
-        friend.getFriend().getEmail(),
-        friend.getFriend().getUsername()
-    );
+    return FriendResponse.builder()
+        .friendListId(friend.getId())
+        .friendEmail(friend.getFriendEntity().getEmail())
+        .friendName(friend.getFriendEntity().getUsername())
+        .build();
   }
 }

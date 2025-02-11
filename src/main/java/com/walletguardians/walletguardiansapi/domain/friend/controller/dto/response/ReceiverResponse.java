@@ -3,12 +3,14 @@ package com.walletguardians.walletguardiansapi.domain.friend.controller.dto.resp
 import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReceiverResponse {
@@ -19,22 +21,14 @@ public class ReceiverResponse {
   private String senderUsername;
   private FriendStatusEnum friendStatus;
 
-  public ReceiverResponse(FriendStatus friendStatus) {
-    this.friendStatusId = friendStatus.getId();
-    this.receiverEmail = friendStatus.getReceiver().getEmail();
-    this.senderEmail = friendStatus.getSender().getEmail();
-    this.senderUsername = friendStatus.getSender().getUsername();
-    this.friendStatus = friendStatus.getFriendStatus();
-  }
-
   public static ReceiverResponse fromEntity(FriendStatus friendStatus) {
-    return new ReceiverResponse(
-        friendStatus.getId(),
-        friendStatus.getSender().getEmail(),
-        friendStatus.getReceiver().getEmail(),
-        friendStatus.getReceiver().getUsername(),
-        friendStatus.getFriendStatus()
-    );
+    return ReceiverResponse.builder()
+        .friendStatusId(friendStatus.getId())
+        .receiverEmail(friendStatus.getReceiver().getEmail())
+        .senderEmail(friendStatus.getSender().getEmail())
+        .senderUsername(friendStatus.getSender().getUsername())
+        .friendStatus(friendStatus.getFriendStatus())
+        .build();
   }
 
 }

@@ -31,9 +31,10 @@ public class Friend {
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private User userEntity;
 
   @ManyToOne
   @JoinColumn(name = "friend_id", nullable = false)
-  private User friend;
+  private User friendEntity;
+
 }

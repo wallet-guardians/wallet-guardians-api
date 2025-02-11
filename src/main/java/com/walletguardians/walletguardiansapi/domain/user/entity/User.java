@@ -62,11 +62,11 @@ public class User {
   private List<FriendStatus> sentList;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Friend> friends;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "friendEntity", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Friend> friendOf;
 
   @JsonIgnore

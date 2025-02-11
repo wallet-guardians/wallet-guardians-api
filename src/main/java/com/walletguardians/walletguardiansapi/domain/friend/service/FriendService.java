@@ -2,7 +2,6 @@ package com.walletguardians.walletguardiansapi.domain.friend.service;
 
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.FriendResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
@@ -24,7 +23,7 @@ public class FriendService {
   @Transactional
   public List<FriendResponse> getAllFriends(CustomUserDetails customUserDetails) {
     User user = userService.findUserByUserId(customUserDetails.getUserId());
-    List<Friend> foundFriends = friendRepository.findByUser(user);
+    List<Friend> foundFriends = friendRepository.findByUserEntity(user);
 
     return foundFriends
         .stream()
@@ -35,18 +34,20 @@ public class FriendService {
   @Transactional
   public void deleteFriend(CustomUserDetails customUserDetails,
       Long friendListId) {
-
-    Friend foundFriend = friendRepository.findByIdAndUser(friendListId, customUserDetails.getUser())
+    User user = customUserDetails.getUser();
+    Friend foundFriend = friendRepository.findByIdAndUserEntity(friendListId, customUserDetails.getUser())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_FRIEND));
+    User friend = foundFriend.getFriendEntity();
 
-    friendRepository.delete(foundFriend);
+    friendRepository.deleteByUserEntityAndFriendEntity(user, friend);
+    friendRepository.deleteByUserEntityAndFriendEntity(friend, user);
   }
 
   @Transactional
   public Friend createFriendEntity(User user, User friend) {
     return Friend.builder()
-        .user(user)
-        .friend(friend)
+        .userEntity(user)
+        .friendEntity(friend)
         .build();
   }
 
