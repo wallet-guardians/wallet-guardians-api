@@ -69,7 +69,7 @@ public class ExpenseController {
   }
 
   @PostMapping("/receipt")
-  public ResponseEntity<BaseResponse<Void>> saveFile(
+  public ResponseEntity<BaseResponse<Void>> createReceiptExpense(
       @RequestPart(value = "file") MultipartFile file,
       @RequestPart(value = "info") CreateReceiptRequest dto,
       @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
