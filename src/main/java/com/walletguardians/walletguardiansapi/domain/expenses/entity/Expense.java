@@ -33,6 +33,8 @@ public class Expense {
   @Column(nullable = false, name = "store_name")
   private String storeName;
 
+  private String imagePath;
+
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
