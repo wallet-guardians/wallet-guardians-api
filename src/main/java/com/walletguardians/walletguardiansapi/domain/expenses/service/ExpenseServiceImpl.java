@@ -5,7 +5,6 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.time.LocalDate;
@@ -21,65 +20,55 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ExpenseServiceImpl implements ExpenseService {
 
-  private final ExpenseRepository expenseRepository;
+    private final ExpenseRepository expenseRepository;
 
-  @Value("${spring.cloud.gcp.storage.bucket}")
-  private String bucketName;
+    @Value("${spring.cloud.gcp.storage.bucket}")
+    private String bucketName;
 
-  @Override
-  @Transactional
-  public void createExpense(CreateExpenseRequest createExpenseRequest,
-      CustomUserDetails customUserDetails) {
-    User user = customUserDetails.getUser();
-    Expense expense = createExpenseRequest.toEntity(user);
-    expenseRepository.save(expense);
-  }
+    @Override
+    @Transactional
+    public void createExpense(User user, CreateExpenseRequest createExpenseRequest) {
+        Expense expense = createExpenseRequest.toEntity(user);
+        expenseRepository.save(expense);
+    }
 
-  @Override
-  public List<Expense> getExpensesByMonth(CustomUserDetails customUserDetails, int year,
-      int month) {
-    Long userId = customUserDetails.getUserId();
+    @Override
+    public List<Expense> getExpensesByMonth(Long userId, int year,
+            int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
 
-    LocalDate startOfMonth = LocalDate.of(year, month, 1);
-    LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+        return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId,
+                startOfMonth, endOfMonth);
+    }
 
-    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, startOfMonth, endOfMonth);
-  }
+    @Override
+    public List<Expense> getExpensesByDay(Long userId, LocalDate date) {
+        return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date,
+                date);
+    }
 
-  @Override
-  public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
-    Long userId = customUserDetails.getUserId();
-    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date, date);
-  }
+    @Override
+    public Expense getExpenseById(Long userId, Long expenseId) {
+        return expenseRepository.findByIdAndUserId(expenseId, userId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
+    }
 
-  @Override
-  public Expense getExpenseById(CustomUserDetails customUserDetails, Long expenseId) {
-    Long userId = customUserDetails.getUserId();
+    @Override
+    public Expense getExpenseByIdAndUserId(Long userId, Long expenseId) {
+        return expenseRepository.findByIdAndUserId(expenseId, userId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
+    }
 
-    return expenseRepository.findByIdAndUserId(expenseId, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-  }
+    @Override
+    @Transactional
+    public void updateExpense(Expense findExpense, UpdateExpenseRequest updateExpenseRequest) {
+        findExpense.update(updateExpenseRequest.toEntity());
+    }
 
-  @Override
-  @Transactional
-  public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest,
-      CustomUserDetails customUserDetails) {
-    Long userId = customUserDetails.getUserId();
-
-    Expense findExpense = expenseRepository.findByIdAndUserId(id, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-
-    findExpense.update(updateExpenseRequest.toEntity());
-  }
-
-  @Override
-  @Transactional
-  public void deleteExpense(Long id, CustomUserDetails customUserDetails) {
-    Long userId = customUserDetails.getUserId();
-
-    Expense findExpense = expenseRepository.findByIdAndUserId(id, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-
-    expenseRepository.delete(findExpense);
-  }
+    @Override
+    @Transactional
+    public void deleteExpense(Expense findExpense) {
+        expenseRepository.delete(findExpense);
+    }
 }

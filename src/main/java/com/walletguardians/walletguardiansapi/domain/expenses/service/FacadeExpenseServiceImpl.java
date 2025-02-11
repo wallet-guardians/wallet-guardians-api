@@ -25,42 +25,48 @@ public class FacadeExpenseServiceImpl implements FacadeExpenseService {
     private final ReceiptExpenseService receiptExpenseService;
     private final OcrService ocrService;
 
-
-
     @Transactional
     @Override
     public void createExpense(CreateExpenseRequest createExpenseRequest,
             CustomUserDetails customUserDetails) {
-        expenseService.createExpense(createExpenseRequest, customUserDetails);
+        User user = customUserDetails.getUser();
+        expenseService.createExpense(user, createExpenseRequest);
     }
 
     @Override
     public List<Expense> getExpensesByMonth(CustomUserDetails customUserDetails, int year,
             int month) {
-        return expenseService.getExpensesByMonth(customUserDetails, year, month);
+        Long userId = customUserDetails.getUserId();
+        return expenseService.getExpensesByMonth(userId, year, month);
     }
 
     @Override
     public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
-        return expenseService.getExpensesByDay(customUserDetails, date);
+        Long userId = customUserDetails.getUserId();
+        return expenseService.getExpensesByDay(userId, date);
     }
 
     @Override
     public Expense getExpenseById(CustomUserDetails customUserDetails, Long expenseId) {
-        return expenseService.getExpenseById(customUserDetails, expenseId);
+        Long userId = customUserDetails.getUserId();
+        return expenseService.getExpenseById(userId, expenseId);
     }
 
     @Transactional
     @Override
-    public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest,
+    public void updateExpense(Long expenseId, UpdateExpenseRequest updateExpenseRequest,
             CustomUserDetails customUserDetails) {
-        expenseService.updateExpense(id, updateExpenseRequest, customUserDetails);
+        Long userId = customUserDetails.getUserId();
+        Expense findExpense = expenseService.getExpenseByIdAndUserId(userId, expenseId);
+        expenseService.updateExpense(findExpense, updateExpenseRequest);
     }
 
     @Transactional
     @Override
-    public void deleteExpense(Long id, CustomUserDetails customUserDetails) {
-        expenseService.deleteExpense(id, customUserDetails);
+    public void deleteExpense(Long expenseId, CustomUserDetails customUserDetails) {
+        Long userId = customUserDetails.getUserId();
+        Expense findExpense = expenseService.getExpenseByIdAndUserId(userId, expenseId);
+        expenseService.deleteExpense(findExpense);
     }
 
     @Transactional
