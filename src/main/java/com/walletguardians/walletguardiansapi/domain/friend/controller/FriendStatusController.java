@@ -34,22 +34,16 @@ public class FriendStatusController {
 
   @PatchMapping("/requests/{friendStatusId}/accept")
   public ResponseEntity<BaseResponse<Void>> acceptFriendRequest(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long friendStatusId) {
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long friendStatusId) {
     friendStatusService.acceptFriendRequest(customUserDetails, friendStatusId);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse());
   }
 
-  @GetMapping("/requests/sent/pending")
+  @GetMapping("/requests/sent")
   public ResponseEntity<BaseResponse<List<SenderResponse>>> getSentRequests(
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    List<SenderResponse> responses = friendStatusService.getSentPendingRequests(customUserDetails);
-    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(responses));
-  }
-
-  @GetMapping("/requests/sent/rejected")
-  public ResponseEntity<BaseResponse<List<SenderResponse>>> getRejectedRequests(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    List<SenderResponse> responses = friendStatusService.getSentRejectedRequests(customUserDetails);
+    List<SenderResponse> responses = friendStatusService.getSentRequests(customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(responses));
   }
 
@@ -62,14 +56,16 @@ public class FriendStatusController {
 
   @DeleteMapping("/requests/{friendStatusId}/reject")
   public ResponseEntity<BaseResponse<Void>> rejectFriendRequest(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long friendStatusId) {
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long friendStatusId) {
     friendStatusService.rejectFriendRequest(customUserDetails, friendStatusId);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse());
   }
 
   @DeleteMapping("/requests/{friendStatusId}/cancel")
   public ResponseEntity<BaseResponse<Void>> cancelFriendRequest(
-      @AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long friendStatusId) {
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long friendStatusId) {
     friendStatusService.cancelFriendRequest(customUserDetails, friendStatusId);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse());
   }

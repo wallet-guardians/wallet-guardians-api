@@ -94,19 +94,8 @@ public class FriendStatusService {
   }
 
   @Transactional
-  public List<SenderResponse> getSentPendingRequests(CustomUserDetails customUserDetails) {
-    return getSentRequests(customUserDetails, FriendStatusEnum.PENDING);
-  }
-
-  @Transactional
-  public List<SenderResponse> getSentRejectedRequests(CustomUserDetails customUserDetails) {
-    return getSentRequests(customUserDetails, FriendStatusEnum.REJECTED);
-  }
-
-  private List<SenderResponse> getSentRequests(CustomUserDetails customUserDetails,
-      FriendStatusEnum friendStatusEnum) {
-    return friendStatusRepository.findBySenderAndFriendStatus(customUserDetails.getUser(),
-            friendStatusEnum)
+  public List<SenderResponse> getSentRequests(CustomUserDetails customUserDetails) {
+    return friendStatusRepository.findBySender(customUserDetails.getUser())
         .stream()
         .map(SenderResponse::fromEntity)
         .collect(Collectors.toList());

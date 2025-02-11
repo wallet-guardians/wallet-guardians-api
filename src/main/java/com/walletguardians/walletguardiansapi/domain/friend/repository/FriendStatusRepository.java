@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface FriendStatusRepository extends JpaRepository<FriendStatus, Long> {
 
-  List<FriendStatus> findBySenderAndFriendStatus(User sender, FriendStatusEnum friendStatus);
+  List<FriendStatus> findBySender(User sender);
 
   List<FriendStatus> findByReceiver(User receiver);
 
