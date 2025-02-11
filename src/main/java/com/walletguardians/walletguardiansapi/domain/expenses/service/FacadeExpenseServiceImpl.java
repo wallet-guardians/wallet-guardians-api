@@ -21,9 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class FacadeExpenseServiceImpl implements FacadeExpenseService {
 
+    private static final String PICTURE_TYPE = "receipts";
+
     private final ExpenseService expenseService;
-    private final ReceiptExpenseService receiptExpenseService;
     private final OcrService ocrService;
+    private final CloudStorageService cloudStorageService;
 
     @Transactional
     @Override
@@ -74,8 +76,8 @@ public class FacadeExpenseServiceImpl implements FacadeExpenseService {
     public void createReceiptExpense(MultipartFile file, CreateReceiptRequest dto, CustomUserDetails customUserDetails)
             throws IOException {
         User user = customUserDetails.getUser();
-        FileInfo fileInfo = receiptExpenseService.uploadReceipt(file, dto, customUserDetails);
+        FileInfo fileInfo = cloudStorageService.uploadPicture(file, PICTURE_TYPE, dto, customUserDetails);
         OcrResponse ocrResponse = ocrService.sendOcrRequest(fileInfo.getContentType(), fileInfo.getFilePath());
-        receiptExpenseService.createReceiptExpense(fileInfo, ocrResponse, dto, user);
+        expenseService.createReceiptExpense(fileInfo, ocrResponse, dto, user);
     }
 }

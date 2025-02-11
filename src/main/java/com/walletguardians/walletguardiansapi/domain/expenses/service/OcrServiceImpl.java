@@ -1,9 +1,11 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ public class OcrServiceImpl implements OcrService{
     private String endpoint;
     @Value("${naver.service.secretKey}")
     private String secretKey;
+    @Value("${spring.cloud.gcp.storage.bucket}")
+    private String bucketName;
 
     public OcrServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
@@ -57,7 +61,7 @@ public class OcrServiceImpl implements OcrService{
     }
 
     private Map<String, Object> setRequestBody(Map<String, Object> imageData) {
-        Map<String, Object> requestBody = setRequestBody(imageData);
+        Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("version", CLOVA_VERSION);
         requestBody.put("requestId", createRequestId());
         requestBody.put("timestamp", System.currentTimeMillis());
@@ -66,10 +70,12 @@ public class OcrServiceImpl implements OcrService{
     }
 
     private String encodeImage(String imagePath) throws IOException {
-        File file = new File(imagePath);
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] imageBytes = inputStream.readAllBytes();
-        inputStream.close();
+        Storage storage = StorageOptions.getDefaultInstance().getService();
+        Blob blob = storage.get(bucketName, imagePath);
+        if (blob == null) {
+            throw new FileNotFoundException("스토리지에서 파일을 찾을 수 없습니다.");
+        }
+        byte[] imageBytes =  blob.getContent();
 
         return Base64.getEncoder().encodeToString(imageBytes);
     }

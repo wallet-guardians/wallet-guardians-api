@@ -1,13 +1,17 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ExpenseService {
+
     void createExpense(User user, CreateExpenseRequest createExpenseRequest);
 
     List<Expense> getExpensesByMonth(Long userId, int year, int month);
@@ -21,4 +25,7 @@ public interface ExpenseService {
     void updateExpense(Expense findExpense, UpdateExpenseRequest updateExpenseRequest);
 
     void deleteExpense(Expense findExpense);
+
+    void createReceiptExpense(FileInfo fileInfo, OcrResponse ocrResponse,
+            CreateReceiptRequest createReceiptRequest, User user);
 }
