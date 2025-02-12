@@ -4,8 +4,6 @@ import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +11,7 @@ public interface FriendStatusRepository extends JpaRepository<FriendStatus, Long
 
   List<FriendStatus> findBySender(User sender);
 
-  List<FriendStatus> findByReceiver(User receiver);
+  List<FriendStatus> findByReceiverAndFriendStatus(User receiver, FriendStatusEnum friendStatus);
 
   Optional<FriendStatus> findByIdAndReceiver(Long id, User sender);
 

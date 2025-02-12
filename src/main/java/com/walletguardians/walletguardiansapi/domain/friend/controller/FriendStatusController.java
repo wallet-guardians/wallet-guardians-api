@@ -47,7 +47,7 @@ public class FriendStatusController {
   }
 
   @GetMapping("/requests/received")
-  public ResponseEntity<BaseResponse<List<ReceiverResponse>>> getRecivedRequests(
+  public ResponseEntity<BaseResponse<List<ReceiverResponse>>> getReceivedRequests(
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
     List<ReceiverResponse> responses = friendStatusService.getReceivedRequests(customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(responses));

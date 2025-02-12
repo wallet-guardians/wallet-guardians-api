@@ -88,7 +88,7 @@ public class FriendStatusService {
 
   @Transactional
   public List<ReceiverResponse> getReceivedRequests(CustomUserDetails customUserDetails) {
-    return friendStatusRepository.findByReceiver(customUserDetails.getUser())
+    return friendStatusRepository.findByReceiverAndFriendStatus(customUserDetails.getUser(), FriendStatusEnum.PENDING)
         .stream()
         .map(ReceiverResponse::fromEntity)
         .toList();
