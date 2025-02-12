@@ -7,9 +7,12 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
 
 # 애플리케이션 복사
 COPY build/libs/wallet-guardians-api-0.0.1-SNAPSHOT.jar app.jar
+COPY entrypoint.sh /app/home/kmsn2001/entrypoint.sh
+
+RUN chmod +x /app/home/kmsn2001/entrypotin.sh
 
 # 포트 노출
 EXPOSE 8080
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar", "./entrypoint.sh"]
