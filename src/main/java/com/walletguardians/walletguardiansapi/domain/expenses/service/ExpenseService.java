@@ -3,88 +3,29 @@ package com.walletguardians.walletguardiansapi.domain.expenses.service;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
-import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
-import com.walletguardians.walletguardiansapi.global.auth.cloudStorage.service.CloudStorageService;
-import com.walletguardians.walletguardiansapi.global.exception.BaseException;
-import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ExpenseService {
+public interface ExpenseService {
 
-  private final ExpenseRepository expenseRepository;
-  private final CloudStorageService cloudStorageService;
+    void createExpense(User user, CreateExpenseRequest createExpenseRequest);
 
-  @Value("${spring.cloud.gcp.storage.bucket}")
-  private String bucketName;
+    List<Expense> getExpensesByMonth(Long userId, int year, int month);
 
-  @Transactional
-  public void createExpense(CreateExpenseRequest createExpenseRequest,
-      CustomUserDetails customUserDetails) {
-    User user = customUserDetails.getUser();
-    Expense expense = createExpenseRequest.toEntity(user);
-    expenseRepository.save(expense);
-  }
+    List<Expense> getExpensesByDay(Long userId, LocalDate date);
 
-  @Transactional(readOnly = true)
-  public List<Expense> getExpensesByMonth(CustomUserDetails customUserDetails, int year,
-      int month) {
-    Long userId = customUserDetails.getUserId();
+    Expense getExpenseById(Long userId, Long expenseId);
 
-    LocalDate startOfMonth = LocalDate.of(year, month, 1);
-    LocalDate endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+    Expense getExpenseByIdAndUserId(Long userId, Long expenseId);
 
-    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, startOfMonth, endOfMonth);
-  }
+    void updateExpense(Expense findExpense, UpdateExpenseRequest updateExpenseRequest);
 
-  @Transactional(readOnly = true)
-  public List<Expense> getExpensesByDay(CustomUserDetails customUserDetails, LocalDate date) {
-    Long userId = customUserDetails.getUserId();
-    return expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(userId, date, date);
-  }
+    void deleteExpense(Expense findExpense);
 
-  @Transactional(readOnly = true)
-  public Expense getExpenseById(CustomUserDetails customUserDetails, Long expenseId) {
-    Long userId = customUserDetails.getUserId();
-
-    return expenseRepository.findByIdAndUserId(expenseId, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-  }
-
-  @Transactional
-  public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest,
-      CustomUserDetails customUserDetails) {
-    Long userId = customUserDetails.getUserId();
-
-    Expense findExpense = expenseRepository.findByIdAndUserId(id, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-
-    findExpense.update(updateExpenseRequest.toEntity());
-  }
-
-  @Transactional
-  public void deleteExpense(Long id, CustomUserDetails customUserDetails) {
-    Long userId = customUserDetails.getUserId();
-
-    Expense findExpense = expenseRepository.findByIdAndUserId(id, userId)
-        .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXPENSES));
-
-    expenseRepository.delete(findExpense);
-  }
-
-  public void uploadReceipt(MultipartFile receiptFile, CreateReceiptRequest dto, CustomUserDetails customUserDetails) {
-    cloudStorageService.uploadPicture(receiptFile, "receipts", dto, customUserDetails);
-  }
-
+    void createReceiptExpense(FileInfo fileInfo, OcrResponse ocrResponse,
+            CreateReceiptRequest createReceiptRequest, User user);
 }

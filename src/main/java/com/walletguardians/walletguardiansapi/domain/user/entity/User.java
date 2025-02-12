@@ -3,7 +3,8 @@ package com.walletguardians.walletguardiansapi.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendshipStatus;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
 import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
 import jakarta.persistence.*;
@@ -14,7 +15,6 @@ import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.List;
 
 @Entity
@@ -42,8 +42,9 @@ public class User {
   @Default
   private String title = "";
 
-  @Column(nullable = false, name = "defense_rate")
-  private float defenseRate = 0;
+  @Default
+  @Column(nullable = false, name = "defense")
+  private int defense = 60;
 
   @Enumerated(EnumType.STRING)
   private Role role;
@@ -54,11 +55,19 @@ public class User {
 
   @JsonIgnore
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<FriendshipStatus> followerList;
+  private List<FriendStatus> receivedList;
 
   @JsonIgnore
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<FriendshipStatus> followingList;
+  private List<FriendStatus> sentList;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friends;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "friendEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friendOf;
 
   @JsonIgnore
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -80,4 +89,11 @@ public class User {
     this.password = passwordEncoder.encode(newPassword);
   }
 
+  public void decreaseDefense(int defense) {
+    this.defense -= defense;
+  }
+
+  public void increaseDefense(int defense) {
+    this.defense += defense;
+  }
 }

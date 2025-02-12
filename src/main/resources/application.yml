@@ -42,3 +42,9 @@ spring:
 
 jwt:
   secret-Key: 2c1aa3edcdb77bfdb894e80077541102e572ffe15907f0c20053be1611c29f6c71bf54e9fb366849c4babd9cc50681e6e3170dd390a45d947bacd6f46c4478c2
+
+naver:
+  service:
+    base-url: "https://cupgrvtb2d.apigw.ntruss.com"
+    endpoint: ${CLOVA_ENDPOINT}
+    secretKey: ${CLOVA_SECRET_KEY}
