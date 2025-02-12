@@ -1,39 +1,28 @@
 package com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response;
 
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
-import lombok.Getter;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class FriendResponse {
 
-  private Long id;
-  private String senderEmail;
-  private String receiverEmail;
-  private String receiverUsername;
-  private FriendStatusEnum friendStatus;
-
-  public FriendResponse(Friend friend) {
-    this.id = friend.getId();
-    this.senderEmail = friend.getSender().getEmail();
-    this.receiverEmail = friend.getReceiver().getEmail();
-    this.receiverUsername = friend.getReceiver().getUsername();
-    this.friendStatus = friend.getFriendStatus();
-  }
+  private Long friendListId;
+  private String friendEmail;
+  private String friendName;
 
   public static FriendResponse fromEntity(Friend friend) {
-    return new FriendResponse(
-        friend.getId(),
-        friend.getSender().getEmail(),
-        friend.getReceiver().getEmail(),
-        friend.getReceiver().getUsername(),
-        friend.getFriendStatus()
-    );
+    return FriendResponse.builder()
+        .friendListId(friend.getId())
+        .friendEmail(friend.getFriendEntity().getEmail())
+        .friendName(friend.getFriendEntity().getUsername())
+        .build();
   }
 }

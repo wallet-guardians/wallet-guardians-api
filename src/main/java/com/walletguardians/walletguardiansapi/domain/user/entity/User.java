@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
 import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
 import jakarta.persistence.*;
@@ -54,11 +55,19 @@ public class User {
 
   @JsonIgnore
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Friend> followerList;
+  private List<FriendStatus> receivedList;
 
   @JsonIgnore
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Friend> followingList;
+  private List<FriendStatus> sentList;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friends;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "friendEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friendOf;
 
   @JsonIgnore
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

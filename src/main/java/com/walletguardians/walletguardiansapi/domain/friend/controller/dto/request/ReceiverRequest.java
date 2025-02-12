@@ -3,8 +3,6 @@ package com.walletguardians.walletguardiansapi.domain.friend.controller.dto.requ
 import lombok.Getter;
 
 @Getter
-public class FriendSenderRequest {
-
-  private String receiverEmail;
-
+public class ReceiverRequest {
+  private String senderEmail;
 }
