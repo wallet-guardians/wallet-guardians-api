@@ -4,12 +4,12 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
+import com.walletguardians.walletguardiansapi.global.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +25,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SecurityConfig {
 
   private final JwtService jwtService;
+  private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -53,6 +54,8 @@ public class SecurityConfig {
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/login")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/signup")).permitAll()
             .anyRequest().authenticated())
+        .oauth2Login(oauth -> oauth.userInfoEndpoint(
+            userInfo -> userInfo.userService(customOAuth2UserService)))
         // jwtFilter 후 UsernamePasswordAuthenticationFilter 인증 처리
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 

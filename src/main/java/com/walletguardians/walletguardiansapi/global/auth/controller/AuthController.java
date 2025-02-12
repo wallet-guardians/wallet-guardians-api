@@ -8,6 +8,8 @@ import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,12 @@ public class AuthController {
   public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserLoginRequest userLoginRequest) {
     TokenDto tokenDto = authService.login(userLoginRequest);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(tokenDto));
+  }
+
+  @GetMapping("/google/login")
+  public ResponseEntity<BaseResponse<TokenDto>> googleLogin(OAuth2AuthenticationToken authentication){
+  TokenDto tokenDto = authService.oauthLogin(authentication);
+  return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(tokenDto));
   }
 
 }

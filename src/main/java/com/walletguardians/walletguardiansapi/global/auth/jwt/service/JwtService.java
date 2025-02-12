@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +67,16 @@ public class JwtService {
     // authenticate 메서드가 실행될 때 Custo,UserDetailsService에서 만든 loadUserByUsername 메서드가 실행
     Authentication authentication = authenticationManagerBuilder.getObject()
         .authenticate(authenticationToken);
+    TokenDto tokenDto = createAllToken(authentication);
+    saveRefreshTokenToRepo(authentication.getName(), tokenDto.getRefreshToken());
+
+    return tokenDto;
+  }
+
+  public TokenDto oauthSignIn(OAuth2AuthenticationToken authenticationToken) {
+    Authentication authentication = new UsernamePasswordAuthenticationToken(
+        authenticationToken.getPrincipal().getAttribute("email"), null);
+
     TokenDto tokenDto = createAllToken(authentication);
     saveRefreshTokenToRepo(authentication.getName(), tokenDto.getRefreshToken());
 
@@ -159,7 +170,8 @@ public class JwtService {
   @Transactional
   public void deleteRefreshTokenByEmail(String email) {
     RefreshToken refreshToken = refreshTokenRepository.findByUserEmail(email)
-        .orElseThrow(() -> new IllegalArgumentException("No refresh token found for user with email: " + email));
+        .orElseThrow(() -> new IllegalArgumentException(
+            "No refresh token found for user with email: " + email));
     refreshTokenRepository.delete(refreshToken);
   }
 

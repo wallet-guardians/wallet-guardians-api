@@ -12,6 +12,7 @@ import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +39,11 @@ public class AuthService {
     }
 
     return jwtService.signIn(userLoginRequest.getEmail(), userLoginRequest.getPassword());
+  }
+
+  @Transactional
+  public TokenDto oauthLogin(OAuth2AuthenticationToken authentication){
+    return jwtService.oauthSignIn(authentication);
   }
 
 }
