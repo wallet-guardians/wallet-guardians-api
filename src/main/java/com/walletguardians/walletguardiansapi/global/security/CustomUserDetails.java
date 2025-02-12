@@ -25,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
   }
 
   public Long getUserId() {
-    return user.getId(); // User 객체에서 userId를 반환
+    return user.getId();
   }
 
   @Override
