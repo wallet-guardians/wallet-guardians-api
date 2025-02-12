@@ -1,43 +1,91 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
-import com.walletguardians.walletguardiansapi.domain.expenses.service.ExpenseService;
-import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.FacadeExpenseService;
+import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
+import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
+import java.io.IOException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
-import java.util.Date;
 
 @RestController
-@RequestMapping("/expense")
+@RequestMapping("/api/expense")
 @RequiredArgsConstructor
 public class ExpenseController {
-    private final ExpenseService expenseService;
 
-    // 지출 생성 API
-    @PostMapping("/{date}")
-    public void createExpense(@RequestBody CreateExpenseRequest createExpenseRequest, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        expenseService.createExpense(date, createExpenseRequest);
-    }
+  private final FacadeExpenseService facadeExpenseService;
+  private final BaseResponseService baseResponseService;
 
-    // 일별 지출 조회 API
-    @GetMapping("/{date}")
-    public List<ExpenseResponse> getMember(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return expenseService.getExpenses(date);
-    }
+  @PostMapping()
+  public ResponseEntity<BaseResponse<Void>> createExpense(
+      @RequestBody CreateExpenseRequest createExpenseRequest,
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    facadeExpenseService.createExpense(createExpenseRequest, customUserDetails);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
 
-    // 지출 수정 API
-    @PutMapping("/{id}")
-    public void updateExpense(@PathVariable Long id, @RequestBody UpdateExpenseRequest updateExpenseRequest) {
-        expenseService.updateExpense(id, updateExpenseRequest);
-    }
+  @GetMapping("/month")
+  public ResponseEntity<BaseResponse<List<Expense>>> getExpensesByMonth(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @RequestParam int year,
+      @RequestParam int month
+  ) {
+    List<Expense> expenses = facadeExpenseService.getExpensesByMonth(customUserDetails, year, month);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(expenses));
+  }
 
-    // 지출 삭제 API
-    @DeleteMapping("/{id}")
-    public void deleteExpense(@PathVariable Long id) {
-        expenseService.deleteExpense(id);
-    }
+  @GetMapping("/day")
+  public ResponseEntity<BaseResponse<List<Expense>>> getExpensesByDay(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+    List<Expense> expenses = facadeExpenseService.getExpensesByDay(customUserDetails, date);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(expenses));
+  }
+
+  @GetMapping("/{expenseId}")
+  public ResponseEntity<BaseResponse<Expense>> getExpenseById(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long expenseId) {
+    Expense expense = facadeExpenseService.getExpenseById(customUserDetails, expenseId);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(expense));
+  }
+
+  @DeleteMapping("/{expenseId}")
+  public ResponseEntity<BaseResponse<Void>> deleteExpense(@PathVariable Long expenseId,
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    facadeExpenseService.deleteExpense(expenseId, customUserDetails);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
+
+  @PostMapping("/receipt")
+  public ResponseEntity<BaseResponse<Void>> createReceiptExpense(
+      @RequestPart(value = "file") MultipartFile file,
+      @RequestPart(value = "info") CreateReceiptRequest dto,
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+    facadeExpenseService.createReceiptExpense(file, dto, customUserDetails);
+
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
+
+  @PutMapping("/{expenseId}")
+  public ResponseEntity<BaseResponse<Void>> updateExpense(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @PathVariable Long expenseId,
+      @RequestBody UpdateExpenseRequest updateExpenseRequest) {
+
+    facadeExpenseService.updateExpense(expenseId, updateExpenseRequest, customUserDetails);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse());
+  }
+
 }

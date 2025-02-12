@@ -1,37 +1,35 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import com.walletguardians.walletguardiansapi.domain.user.entity.User;
+import java.time.LocalDate;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CreateExpenseRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "expense_id")
-    private Long id;
+  private int amount;
 
-    private int amount;
+  private LocalDate date;
 
-    private Category category;
+  private String category;
 
-    private String description;
+  private String description;
 
-    private String storeName;
+  private String storeName;
 
-    public Expense toEntity() {
-        return Expense.builder()
-                .id(id)
-                .amount(amount)
-                .category(category)
-                .description(description)
-                .storeName(storeName)
-                .build();
-    }
+  public Expense toEntity(User user) {
+    return Expense.builder()
+        .amount(amount)
+        .category(category)
+        .description(description)
+        .storeName(storeName)
+        .date(date)
+        .user(user)
+        .build();
+  }
 
 }

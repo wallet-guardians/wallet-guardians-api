@@ -1,37 +1,37 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response;
 
-import com.walletguardians.walletguardiansapi.domain.category.entity.Category;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExpenseResponse {
 
-    private Long id;
+  private Long id;
 
-    private Category category;
+  private LocalDate date;
 
-    private int amount;
+  private String category;
 
-    private String storeName;
+  private int amount;
 
-    private String description;
+  private String storeName;
 
-    @Builder
-    private ExpenseResponse(Long id, Category category, int amount, String storeName, String description) {
-        this.id = id;
-        this.category = category;
-        this.amount = amount;
-        this.storeName = storeName;
-        this.description = description;
-    }
+  private String description;
 
-    public static ExpenseResponse from(Expense expense) {
-        return ExpenseResponse.builder()
-                .id(expense.getId())
-                .category(expense.getCategory())
-                .amount(expense.getAmount())
-                .storeName(expense.getStoreName())
-                .description(expense.getDescription())
-                .build();
-    }
+  public static ExpenseResponse from(Expense expense) {
+    return ExpenseResponse.builder()
+        .id(expense.getId())
+        .category(expense.getCategory())
+        .amount(expense.getAmount())
+        .storeName(expense.getStoreName())
+        .description(expense.getDescription())
+        .build();
+  }
 }

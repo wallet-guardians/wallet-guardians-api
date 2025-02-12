@@ -1,52 +1,31 @@
 package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
-import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ExpenseResponse;
-import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
+import com.walletguardians.walletguardiansapi.domain.user.entity.User;
+import java.time.LocalDate;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ExpenseService {
+public interface ExpenseService {
 
-    private final ExpenseRepository expenseRepository;
+    void createExpense(User user, CreateExpenseRequest createExpenseRequest);
 
-    // 지출 생성
-    public void createExpense(Date date, CreateExpenseRequest createExpenseRequest) {
-        Expense expense = createExpenseRequest.toEntity();
-        expense.setDate(date);
-        expenseRepository.save(expense);
-    }
+    List<Expense> getExpensesByMonth(Long userId, int year, int month);
 
-    // 지출 조회
-    public List<ExpenseResponse> getExpenses(Date date) {
-        List<Expense> expenses = expenseRepository.findAll();
-        List<ExpenseResponse> expenseResponses = new ArrayList<>();
-        for (Expense expense : expenses) {
-            if (expense.getDate().equals(date)) {
-                expenseResponses.add(ExpenseResponse.from(expense));
-            }
-        }
-        return expenseResponses;
-    }
+    List<Expense> getExpensesByDay(Long userId, LocalDate date);
 
-    // 지출 수정
-    public void updateExpense(Long id, UpdateExpenseRequest updateExpenseRequest) {
-        Expense updateExpense = updateExpenseRequest.toEntity();
-        Expense findExpense = expenseRepository.findById(id)
-                .orElseThrow(() ->new IllegalArgumentException("Expense not found"));
-        findExpense.update(updateExpense);
-    }
+    Expense getExpenseById(Long userId, Long expenseId);
 
-    // ID로 지출 삭제
-    public void deleteExpense(Long id) {
-        expenseRepository.deleteById(id);
-    }
+    Expense getExpenseByIdAndUserId(Long userId, Long expenseId);
+
+    void updateExpense(Expense findExpense, UpdateExpenseRequest updateExpenseRequest);
+
+    void deleteExpense(Expense findExpense);
+
+    void createReceiptExpense(FileInfo fileInfo, OcrResponse ocrResponse,
+            CreateReceiptRequest createReceiptRequest, User user);
 }

@@ -1,28 +1,27 @@
 package com.walletguardians.walletguardiansapi.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
+import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
+import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.jdbc.Expectation.None;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "USERS")
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
@@ -41,20 +40,43 @@ public class User {
   private String password;
 
   @Default
-  private String title = null;
+  private String title = "";
 
   @Default
-  @Column(nullable = false, name = "defense_rate")
-  private float defenseRate = 0;
-
-  @Default
-  @Column(nullable = false, name = "profile_picture_path")
-  private String profilePicturePath = "";
+  @Column(nullable = false, name = "defense")
+  private int defense = 60;
 
   @Enumerated(EnumType.STRING)
   private Role role;
 
-  //== 패스워드 암호화 ==//
+  @JsonIgnore
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Expense> expenses;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<FriendStatus> receivedList;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<FriendStatus> sentList;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friends;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "friendEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friend> friendOf;
+
+  @JsonIgnore
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Budget budget;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Income> incomes;
+
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }
@@ -63,4 +85,15 @@ public class User {
     return passwordEncoder.matches(password, this.password);
   }
 
+  public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
+    this.password = passwordEncoder.encode(newPassword);
+  }
+
+  public void decreaseDefense(int defense) {
+    this.defense -= defense;
+  }
+
+  public void increaseDefense(int defense) {
+    this.defense += defense;
+  }
 }
