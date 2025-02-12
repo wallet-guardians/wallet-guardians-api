@@ -1,4 +1,4 @@
-package com.walletguardians.walletguardiansapi.global.auth;
+package com.walletguardians.walletguardiansapi.global.security;
 
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import java.util.ArrayList;

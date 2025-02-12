@@ -1,5 +1,6 @@
-package com.walletguardians.walletguardiansapi.domain.user.entity;
+package com.walletguardians.walletguardiansapi.global.auth.oauth;
 
+import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

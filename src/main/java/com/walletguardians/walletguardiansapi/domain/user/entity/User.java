@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendState;
 import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
 import jakarta.persistence.*;
+import java.io.Serializable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,11 +55,11 @@ public class User {
 
   @JsonIgnore
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<FriendStatus> receivedList;
+  private List<FriendState> receivedList;
 
   @JsonIgnore
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<FriendStatus> sentList;
+  private List<FriendState> sentList;
 
   @JsonIgnore
   @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)

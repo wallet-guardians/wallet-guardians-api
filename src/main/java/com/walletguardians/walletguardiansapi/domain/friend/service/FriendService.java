@@ -5,7 +5,7 @@ import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.util.List;

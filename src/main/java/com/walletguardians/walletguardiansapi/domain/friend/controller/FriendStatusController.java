@@ -4,7 +4,7 @@ import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.reque
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.SenderResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.ReceiverResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.service.FriendStatusService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;

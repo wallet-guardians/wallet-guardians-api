@@ -24,21 +24,24 @@ public class AuthController {
   private final BaseResponseService baseResponseService;
 
   @PostMapping("/signup")
-  public ResponseEntity<BaseResponse<Void>> register(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public ResponseEntity<BaseResponse<Void>> register(
+      @RequestBody UserRegisterRequest userRegisterRequest) {
     authService.signUpUser(userRegisterRequest);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
   @PostMapping("/login")
-  public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserLoginRequest userLoginRequest) {
+  public ResponseEntity<BaseResponse<TokenDto>> login(
+      @RequestBody UserLoginRequest userLoginRequest) {
     TokenDto tokenDto = authService.login(userLoginRequest);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(tokenDto));
   }
 
   @GetMapping("/google/login")
-  public ResponseEntity<BaseResponse<TokenDto>> googleLogin(OAuth2AuthenticationToken authentication){
-  TokenDto tokenDto = authService.oauthLogin(authentication);
-  return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(tokenDto));
+  public ResponseEntity<BaseResponse<TokenDto>> googleLogin(
+      OAuth2AuthenticationToken authentication) {
+    TokenDto tokenDto = authService.oauthLogin(authentication);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(tokenDto));
   }
 
 }

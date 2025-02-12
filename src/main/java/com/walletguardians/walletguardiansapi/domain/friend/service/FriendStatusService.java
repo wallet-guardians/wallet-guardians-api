@@ -4,13 +4,13 @@ import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.reque
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.ReceiverResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.SenderResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.Friend;
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendState;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendRepository;
 import com.walletguardians.walletguardiansapi.domain.friend.repository.FriendStatusRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
@@ -38,52 +38,52 @@ public class FriendStatusService {
     }
 
     this.checkFriendStatusAndFriendExists(sender, receiver);
-    FriendStatus pendingFriendStatus = this.createFriendStatusEntity(sender, receiver);
+    FriendState pendingFriendState = this.createFriendStatusEntity(sender, receiver);
 
-    friendStatusRepository.save(pendingFriendStatus);
-    return SenderResponse.fromEntity(pendingFriendStatus);
+    friendStatusRepository.save(pendingFriendState);
+    return SenderResponse.fromEntity(pendingFriendState);
   }
 
   @Transactional
   public void acceptFriendRequest(CustomUserDetails customUserDetails,
       Long friendStatusId) {
     User user = customUserDetails.getUser();
-    FriendStatus foundFriendStatus = friendStatusRepository.findByIdAndReceiver(friendStatusId, user)
+    FriendState foundFriendState = friendStatusRepository.findByIdAndReceiver(friendStatusId, user)
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_FRIEND_REQUEST));
 
-    User friend = foundFriendStatus.getSender();
+    User friend = foundFriendState.getSender();
 
-    if (foundFriendStatus.getFriendStatus().equals(FriendStatusEnum.REJECTED)) {
+    if (foundFriendState.getFriendStatus().equals(FriendStatusEnum.REJECTED)) {
       throw new BaseException(BaseResponseStatus.ALREADY_REJECTED);
     }
 
     this.saveFriend(user, friend);
     this.saveFriend(friend, user);
-    friendStatusRepository.delete(foundFriendStatus);
+    friendStatusRepository.delete(foundFriendState);
   }
 
   @Transactional
   public void rejectFriendRequest(CustomUserDetails customUserDetails,
       Long friendStatusId) {
-    FriendStatus foundFriendStatus = friendStatusRepository.findByIdAndReceiver(friendStatusId,
+    FriendState foundFriendState = friendStatusRepository.findByIdAndReceiver(friendStatusId,
             customUserDetails.getUser())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_FRIEND_REQUEST));
 
-    if (foundFriendStatus.getFriendStatus().equals(FriendStatusEnum.REJECTED)) {
+    if (foundFriendState.getFriendStatus().equals(FriendStatusEnum.REJECTED)) {
       throw new BaseException(BaseResponseStatus.ALREADY_REJECTED);
     }
 
-    foundFriendStatus.updateFriendStatus(FriendStatusEnum.REJECTED);
+    foundFriendState.updateFriendStatus(FriendStatusEnum.REJECTED);
   }
 
   @Transactional
   public void cancelFriendRequest(CustomUserDetails customUserDetails,
       Long friendStatusId) {
-    FriendStatus foundFriendStatus = friendStatusRepository.findByIdAndSender(friendStatusId,
+    FriendState foundFriendState = friendStatusRepository.findByIdAndSender(friendStatusId,
             customUserDetails.getUser())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_FRIEND_REQUEST));
 
-    friendStatusRepository.delete(foundFriendStatus);
+    friendStatusRepository.delete(foundFriendState);
   }
 
   @Transactional
@@ -122,8 +122,8 @@ public class FriendStatusService {
     }
   }
 
-  private FriendStatus createFriendStatusEntity(User sender, User receiver) {
-    return FriendStatus.builder()
+  private FriendState createFriendStatusEntity(User sender, User receiver) {
+    return FriendState.builder()
         .sender(sender)
         .receiver(receiver)
         .friendStatus(FriendStatusEnum.PENDING)

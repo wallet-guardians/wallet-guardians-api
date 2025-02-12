@@ -1,6 +1,5 @@
-package com.walletguardians.walletguardiansapi.global.auth.service;
+package com.walletguardians.walletguardiansapi.global.auth.oauth;
 
-import com.walletguardians.walletguardiansapi.domain.user.entity.CustomOAuth2User;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.Role;
 import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;

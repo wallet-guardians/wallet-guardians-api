@@ -1,10 +1,10 @@
-package com.walletguardians.walletguardiansapi.global.config;
+package com.walletguardians.walletguardiansapi.global.security.config;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
-import com.walletguardians.walletguardiansapi.global.auth.service.CustomOAuth2UserService;
+import com.walletguardians.walletguardiansapi.global.auth.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,9 +53,14 @@ public class SecurityConfig {
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/login")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/signup")).permitAll()
+            .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/google/login"))
+            .permitAll()
             .anyRequest().authenticated())
         .oauth2Login(oauth -> oauth.userInfoEndpoint(
-            userInfo -> userInfo.userService(customOAuth2UserService)))
+                userInfo -> userInfo.userService(customOAuth2UserService))
+            .successHandler((request, response, authentication) ->
+                response.sendRedirect("/api/auth/google/login")
+            ))
         // jwtFilter 후 UsernamePasswordAuthenticationFilter 인증 처리
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
