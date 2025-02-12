@@ -19,6 +19,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   public static final String NO_CHECK_URL_LOGIN = "/api/auth/login";
   public static final String NO_CHECK_URL_SIGN_UP = "/api/auth/signup";
+  public static final String NO_CHECK_URL_OAUTH_LOGIN = "/api/auth/google/login";
 
   private final JwtService jwtService;
 
@@ -35,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * 회원가입 && LOGIN
      */
     if (request.getRequestURI().startsWith(NO_CHECK_URL_LOGIN) || request.getRequestURI()
-        .startsWith(NO_CHECK_URL_SIGN_UP)) {
+        .startsWith(NO_CHECK_URL_SIGN_UP) || request.getRequestURI().startsWith(NO_CHECK_URL_OAUTH_LOGIN)) {
       filterChain.doFilter(request, response);
       return;
     }

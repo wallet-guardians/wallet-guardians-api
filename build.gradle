@@ -35,6 +35,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+    // OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // MySql
     runtimeOnly 'com.mysql:mysql-connector-j'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

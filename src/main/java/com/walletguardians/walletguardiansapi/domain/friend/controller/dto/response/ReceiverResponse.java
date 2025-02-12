@@ -1,6 +1,6 @@
 package com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response;
 
-import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendStatus;
+import com.walletguardians.walletguardiansapi.domain.friend.entity.FriendState;
 import com.walletguardians.walletguardiansapi.domain.friend.entity.status.FriendStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,13 +21,13 @@ public class ReceiverResponse {
   private String senderUsername;
   private FriendStatusEnum friendStatus;
 
-  public static ReceiverResponse fromEntity(FriendStatus friendStatus) {
+  public static ReceiverResponse fromEntity(FriendState friendState) {
     return ReceiverResponse.builder()
-        .friendStatusId(friendStatus.getId())
-        .receiverEmail(friendStatus.getReceiver().getEmail())
-        .senderEmail(friendStatus.getSender().getEmail())
-        .senderUsername(friendStatus.getSender().getUsername())
-        .friendStatus(friendStatus.getFriendStatus())
+        .friendStatusId(friendState.getId())
+        .receiverEmail(friendState.getReceiver().getEmail())
+        .senderEmail(friendState.getSender().getEmail())
+        .senderUsername(friendState.getSender().getUsername())
+        .friendStatus(friendState.getFriendStatus())
         .build();
   }
 

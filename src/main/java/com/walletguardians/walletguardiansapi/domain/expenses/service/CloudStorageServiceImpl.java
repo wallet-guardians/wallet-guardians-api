@@ -7,7 +7,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;

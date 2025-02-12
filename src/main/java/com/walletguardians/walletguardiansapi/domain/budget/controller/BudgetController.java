@@ -4,8 +4,7 @@ import com.walletguardians.walletguardiansapi.domain.budget.controller.dto.Budge
 import com.walletguardians.walletguardiansapi.domain.budget.controller.dto.UpdateBudgetRequest;
 import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.budget.service.BudgetService;
-import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;

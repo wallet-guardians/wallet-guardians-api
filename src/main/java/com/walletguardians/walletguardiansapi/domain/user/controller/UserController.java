@@ -3,7 +3,7 @@ package com.walletguardians.walletguardiansapi.domain.user.controller;
 import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UpdateUserRequest;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.service.UserService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;

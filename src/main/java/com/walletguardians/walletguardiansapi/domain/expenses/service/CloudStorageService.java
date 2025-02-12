@@ -2,7 +2,7 @@ package com.walletguardians.walletguardiansapi.domain.expenses.service;
 
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CloudStorageService {
