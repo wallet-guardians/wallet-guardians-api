@@ -7,7 +7,7 @@ import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;

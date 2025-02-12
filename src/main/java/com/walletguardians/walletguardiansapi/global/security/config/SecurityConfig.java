@@ -1,9 +1,10 @@
-package com.walletguardians.walletguardiansapi.global.config;
+package com.walletguardians.walletguardiansapi.global.security.config;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.filter.JwtAuthenticationFilter;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
+import com.walletguardians.walletguardiansapi.global.auth.oauth.CustomOAuth2UserService;
 import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SecurityConfig {
 
   private final JwtService jwtService;
+  private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -50,7 +52,14 @@ public class SecurityConfig {
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/login")).permitAll()
             .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/signup")).permitAll()
+            .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/google/login"))
+            .permitAll()
             .anyRequest().authenticated())
+        .oauth2Login(oauth -> oauth.userInfoEndpoint(
+                userInfo -> userInfo.userService(customOAuth2UserService))
+            .successHandler((request, response, authentication) ->
+                response.sendRedirect("/api/auth/google/login")
+            ))
         .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();

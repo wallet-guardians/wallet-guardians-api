@@ -2,7 +2,7 @@ package com.walletguardians.walletguardiansapi.domain.friend.controller;
 
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.FriendResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.service.FriendService;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import java.util.List;

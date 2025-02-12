@@ -3,6 +3,8 @@ package com.walletguardians.walletguardiansapi.domain.expenses.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import jakarta.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import lombok.*;
 
@@ -12,7 +14,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Expense {
+public class Expense implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

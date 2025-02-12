@@ -3,14 +3,14 @@ package com.walletguardians.walletguardiansapi.global.auth.controller;
 
 import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UserLoginRequest;
 import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UserRegisterRequest;
-
 import com.walletguardians.walletguardiansapi.global.auth.jwt.dto.TokenDto;
 import com.walletguardians.walletguardiansapi.global.auth.service.AuthService;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +25,24 @@ public class AuthController {
   private final BaseResponseService baseResponseService;
 
   @PostMapping("/signup")
-  public ResponseEntity<BaseResponse<Void>> register(@RequestBody UserRegisterRequest userRegisterRequest) {
+  public ResponseEntity<BaseResponse<Void>> register(
+      @RequestBody UserRegisterRequest userRegisterRequest) {
     authService.signUpUser(userRegisterRequest);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
   @PostMapping("/login")
-  public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserLoginRequest userLoginRequest) {
+  public ResponseEntity<BaseResponse<TokenDto>> login(
+      @RequestBody UserLoginRequest userLoginRequest) {
     TokenDto tokenDto = authService.login(userLoginRequest);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(tokenDto));
+  }
+
+  @GetMapping("/google/login")
+  public ResponseEntity<BaseResponse<TokenDto>> googleLogin(
+      OAuth2AuthenticationToken authentication) {
+    TokenDto tokenDto = authService.oauthLogin(authentication);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(tokenDto));
   }
 
 }

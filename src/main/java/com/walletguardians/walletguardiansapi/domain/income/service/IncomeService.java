@@ -5,7 +5,7 @@ import com.walletguardians.walletguardiansapi.domain.income.controller.dto.Updat
 import com.walletguardians.walletguardiansapi.domain.income.entity.Income;
 import com.walletguardians.walletguardiansapi.domain.income.repository.IncomeRepository;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.time.LocalDate;

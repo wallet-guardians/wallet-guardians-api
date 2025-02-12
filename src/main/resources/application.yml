@@ -11,6 +11,23 @@ spring:
   application:
     name: wallet-guardians-api
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            scope:
+              - profile
+              - email
+            redirect-uri: https://localhost:8080/api/auth/google/login
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
   cloud:
     gcp:
       storage:
@@ -41,7 +58,7 @@ spring:
       max-request-size: 10MB
 
 jwt:
-  secret-Key: ${jwt.secret-Key}
+  secret-Key: ${JWT_SECRET_KEY}
 
 naver:
   service:
