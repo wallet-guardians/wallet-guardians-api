@@ -1,7 +1,6 @@
 package com.walletguardians.walletguardiansapi.domain.friend.controller;
 
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.request.SenderRequest;
-import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.request.ReceiverRequest;
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.SenderResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.controller.dto.response.ReceiverResponse;
 import com.walletguardians.walletguardiansapi.domain.friend.service.FriendStatusService;
@@ -54,7 +53,7 @@ public class FriendStatusController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse(responses));
   }
 
-  @DeleteMapping("/requests/{friendStatusId}/reject")
+  @PatchMapping("/requests/{friendStatusId}/reject")
   public ResponseEntity<BaseResponse<Void>> rejectFriendRequest(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @PathVariable Long friendStatusId) {
