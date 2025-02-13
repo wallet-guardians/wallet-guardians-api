@@ -5,6 +5,7 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.FacadeExpenseService;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ReceiptImageResponse;
 import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
@@ -88,4 +89,12 @@ public class ExpenseController {
     return ResponseEntity.ok(baseResponseService.getSuccessResponse());
   }
 
+  @GetMapping("/receipt")
+  public ResponseEntity<BaseResponse<List<ReceiptImageResponse>>> getReceipts(
+          @AuthenticationPrincipal CustomUserDetails customUserDetails,
+          @RequestParam int year,
+          @RequestParam int month) {
+    List<ReceiptImageResponse> receipts = facadeExpenseService.getAllMyReceipts(year, month, customUserDetails);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(receipts));
+  }
 }
