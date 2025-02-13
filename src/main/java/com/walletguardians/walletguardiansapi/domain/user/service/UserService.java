@@ -2,9 +2,12 @@ package com.walletguardians.walletguardiansapi.domain.user.service;
 
 import com.walletguardians.walletguardiansapi.domain.budget.repository.BudgetRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.CloudStorageService;
+import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
 import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UpdateUserRequest;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;
+import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
@@ -15,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,8 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final ExpenseRepository expenseRepository;
   private final BudgetRepository budgetRepository;
+  private final CloudStorageService cloudStorageService;
+
 
   @Transactional(readOnly = true)
   public User findUserByUserId(Long userId) {
@@ -89,6 +95,19 @@ public class UserService {
     } else if (totalSpent < budgetAmount) {
       user.increaseDefense(10);
     }
+  }
+
+  @Transactional
+  public String uploadProfilePicture(Long userId, MultipartFile file, CustomUserDetails customUserDetails) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID));
+
+    FileInfo fileInfo = cloudStorageService.uploadProfilePicture(file, "profile-pictures", customUserDetails);
+
+    user.updateProfileImage(fileInfo.getFilePath());
+    userRepository.save(user);
+
+    return fileInfo.getFilePath();
   }
 
 }

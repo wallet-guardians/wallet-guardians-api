@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,4 +65,21 @@ public class UserController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
+  @PutMapping("/profile")
+  public ResponseEntity<BaseResponse<String>> uploadProfilePicture(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @RequestParam("file") MultipartFile file) {
+
+    String imageUrl = userService.uploadProfilePicture(customUserDetails.getUserId(), file, customUserDetails);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(imageUrl));
+  }
+
+
+  @GetMapping("/me")
+  public ResponseEntity<BaseResponse<User>> getUserProfile(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+    User user = userService.findUserByUserId(customUserDetails.getUserId());
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(user));
+  }
 }
