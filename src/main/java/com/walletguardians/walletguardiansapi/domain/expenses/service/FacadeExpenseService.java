@@ -3,6 +3,7 @@ package com.walletguardians.walletguardiansapi.domain.expenses.service;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ReceiptImageResponse;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import java.io.IOException;
@@ -29,5 +30,5 @@ public interface FacadeExpenseService {
     void createReceiptExpense(MultipartFile file, CreateReceiptRequest dto, CustomUserDetails customUserDetails)
             throws IOException;
 
-
+    List<ReceiptImageResponse> getAllMyReceipts(int year, int month, CustomUserDetails customUserDetails);
 }

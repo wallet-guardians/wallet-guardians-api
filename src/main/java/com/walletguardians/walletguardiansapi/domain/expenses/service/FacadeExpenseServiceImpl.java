@@ -3,6 +3,7 @@ package com.walletguardians.walletguardiansapi.domain.expenses.service;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateExpenseRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.CreateReceiptRequest;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.request.UpdateExpenseRequest;
+import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ReceiptImageResponse;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileInfo;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.OcrResponse;
@@ -79,5 +80,16 @@ public class FacadeExpenseServiceImpl implements FacadeExpenseService {
         FileInfo fileInfo = cloudStorageService.uploadPicture(file, PICTURE_TYPE, dto, customUserDetails);
         OcrResponse ocrResponse = ocrService.sendOcrRequest(fileInfo.getContentType(), fileInfo.getFilePath());
         expenseService.createReceiptExpense(fileInfo, ocrResponse, dto, user);
+    }
+
+    @Override
+    public List<ReceiptImageResponse> getAllMyReceipts(int year, int month,
+            CustomUserDetails customUserDetails) {
+        Long userId = customUserDetails.getUserId();
+        List<Expense> expenses = expenseService.getExpensesByMonth(userId, year, month);
+        expenses.removeIf(expense -> expense.getImagePath()==null || expense.getImagePath().isEmpty());
+        return expenses.stream()
+                .map(ReceiptImageResponse::from)
+                .toList();
     }
 }
