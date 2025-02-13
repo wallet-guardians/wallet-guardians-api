@@ -6,9 +6,9 @@ import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.req
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.service.FacadeExpenseService;
 import com.walletguardians.walletguardiansapi.domain.expenses.controller.dto.response.ReceiptImageResponse;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponse;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseService;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import java.io.IOException;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,8 @@ public class ExpenseController {
       @RequestParam int year,
       @RequestParam int month
   ) {
-    List<Expense> expenses = facadeExpenseService.getExpensesByMonth(customUserDetails, year, month);
+    List<Expense> expenses = facadeExpenseService.getExpensesByMonth(customUserDetails, year,
+        month);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(expenses));
   }
 
@@ -91,10 +92,11 @@ public class ExpenseController {
 
   @GetMapping("/receipt")
   public ResponseEntity<BaseResponse<List<ReceiptImageResponse>>> getReceipts(
-          @AuthenticationPrincipal CustomUserDetails customUserDetails,
-          @RequestParam int year,
-          @RequestParam int month) {
-    List<ReceiptImageResponse> receipts = facadeExpenseService.getAllMyReceipts(year, month, customUserDetails);
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @RequestParam int year,
+      @RequestParam int month) {
+    List<ReceiptImageResponse> receipts = facadeExpenseService.getAllMyReceipts(year, month,
+        customUserDetails);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(receipts));
   }
 }
