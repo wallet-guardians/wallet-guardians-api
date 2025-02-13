@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 public class CreateIncomeRequest {
 
-  private LocalDate date;
   private int amount;
+  private LocalDate date;
   private String category;
   private String description;
 
