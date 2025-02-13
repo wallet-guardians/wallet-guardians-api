@@ -40,7 +40,10 @@ public class User {
   private String password;
 
   @Default
-  private String title = "";
+  private String budgetTitle = "";
+
+  @Default
+  private String expenseTitle = "";
 
   @Default
   @Column(nullable = false, name = "defense")
@@ -89,10 +92,15 @@ public class User {
     this.password = passwordEncoder.encode(newPassword);
   }
 
+  public void updateBudgetTitle(String newTitle){
+    this.budgetTitle = newTitle;
+  }
+  public void updateExpenseTitle(String newTitle){
+    this.expenseTitle = newTitle;
+  }
   public void decreaseDefense(int defense) {
     this.defense -= defense;
   }
-
   public void increaseDefense(int defense) {
     this.defense += defense;
   }
