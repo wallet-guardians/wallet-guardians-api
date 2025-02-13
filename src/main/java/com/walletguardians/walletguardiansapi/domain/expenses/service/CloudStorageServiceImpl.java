@@ -116,4 +116,20 @@ public class CloudStorageServiceImpl implements CloudStorageService {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
         }
     }
+
+    @Override
+    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType, CustomUserDetails customUserDetails) {
+        validateFile(pictureFile);
+
+        String filePath = generateProfileFilePath(pictureFile);
+        uploadToCloudStorage(pictureFile, filePath, pictureFile.getContentType());
+
+
+        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + filePath, pictureFile.getContentType());
+    }
+
+    private String generateProfileFilePath(MultipartFile pictureFile) {
+        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
+    }
+
 }

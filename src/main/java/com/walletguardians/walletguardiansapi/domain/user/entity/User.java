@@ -77,6 +77,9 @@ public class User {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Income> incomes;
 
+  @Column(name = "profile_image_url")
+  private String profileImageUrl;
+
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }
@@ -95,5 +98,9 @@ public class User {
 
   public void increaseDefense(int defense) {
     this.defense += defense;
+  }
+
+  public void updateProfileImage(String imageUrl) {
+    this.profileImageUrl = imageUrl;
   }
 }
