@@ -7,10 +7,10 @@ import com.walletguardians.walletguardiansapi.domain.expenses.service.dto.FileIn
 import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request.UpdateUserRequest;
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;
-import com.walletguardians.walletguardiansapi.global.auth.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
+import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
