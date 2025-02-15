@@ -12,6 +12,6 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
   Optional<Budget> findByUser(User user);
 
   @Query("SELECT COALESCE(b.amount, 0) FROM Budget b WHERE b.user.id = :userId AND FUNCTION('DATE_FORMAT', b.date, '%Y-%m') = FUNCTION('DATE_FORMAT', :month, '%Y-%m')")
-  Integer getBudgetByUserIdAndMonth(@Param("userId") Long userId, @Param("month") LocalDate month);
+  Optional<Integer> getBudgetByUserIdAndMonth(@Param("userId") Long userId, @Param("month") LocalDate month);
 
 }

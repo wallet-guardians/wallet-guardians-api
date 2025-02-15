@@ -1,6 +1,5 @@
 package com.walletguardians.walletguardiansapi.domain.user.service;
 
-import com.walletguardians.walletguardiansapi.domain.budget.entity.Budget;
 import com.walletguardians.walletguardiansapi.domain.budget.repository.BudgetRepository;
 import com.walletguardians.walletguardiansapi.domain.expenses.entity.Expense;
 import com.walletguardians.walletguardiansapi.domain.expenses.repository.ExpenseRepository;
@@ -8,11 +7,12 @@ import com.walletguardians.walletguardiansapi.domain.user.controller.dto.request
 import com.walletguardians.walletguardiansapi.domain.user.entity.User;
 import com.walletguardians.walletguardiansapi.domain.user.entity.auth.ExpenseCategory;
 import com.walletguardians.walletguardiansapi.domain.user.repository.UserRepository;
+import com.walletguardians.walletguardiansapi.domain.user.valueobject.TitleCondition;
 import com.walletguardians.walletguardiansapi.global.auth.jwt.service.JwtService;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
 import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -79,16 +79,19 @@ public class UserService {
 
   @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 자정에 실행
   @Transactional
-  public void updateUserDefense() {
-    LocalDate lastMonth = LocalDate.now().minusMonths(1);
+  public void updateUserDefenseAndTitles() {
+    LocalDate lastMonth = LocalDate.now().minusMonths(1).withDayOfMonth(1);
     List<User> users = userRepository.findAll();
-    users.forEach(user -> updateDefenseForUser(user, lastMonth));
+    users.forEach(user -> {
+      updateDefenseForUser(user, lastMonth);
+      updateTitles(user, lastMonth);
+    });
   }
 
   private void updateDefenseForUser(User user, LocalDate lastMonth) {
     int totalSpent = expenseRepository.getTotalSpentByUserIdAndMonth(user.getId(), lastMonth);
-    Integer budget = budgetRepository.getBudgetByUserIdAndMonth(user.getId(), lastMonth);
-    int budgetAmount = (budget != null) ? budget : 0;
+    int budgetAmount = budgetRepository.getBudgetByUserIdAndMonth(user.getId(), lastMonth)
+        .orElse(0);
 
     if (totalSpent > budgetAmount) {
       user.decreaseDefense(6);
@@ -97,28 +100,31 @@ public class UserService {
     }
   }
 
-  public void updateMonthlyTitles(User user) {
-    LocalDate now = LocalDate.now();
-    YearMonth lastMonth = YearMonth.from(now).minusMonths(1);
+  private void updateTitles(User user, LocalDate firstOfLastMonth) {
+    LocalDate lastOfLastMonth = firstOfLastMonth.with(TemporalAdjusters.lastDayOfMonth());
+    Long userId = user.getId();
 
-    List<Expense> lastMonthExpenses = user.getExpenses().stream()
-        .filter(e -> YearMonth.from(e.getDate()).equals(lastMonth))
-        .toList();
+    int totalSpent = expenseRepository.getTotalSpentByUserIdAndMonth(userId, firstOfLastMonth);
+    int lastMonthBudget = budgetRepository.getBudgetByUserIdAndMonth(userId, firstOfLastMonth)
+        .orElse(0);
 
-    String newBudgetTitle = determineBudgetTitle(lastMonthExpenses, user.getBudget());
-    String newExpenseTitle = determineExpenseTitle(lastMonthExpenses);
+    List<Expense> lastMonthExpenses = expenseRepository.findAllByUserIdAndDateBetweenOrderByDateAscIdAsc(
+        userId, firstOfLastMonth, lastOfLastMonth);
 
-    user.updateBudgetTitle(newBudgetTitle);
-    user.updateExpenseTitle(newExpenseTitle);
+    user.updateBudgetTitle(determineBudgetTitle(totalSpent, lastMonthBudget));
+    user.updateExpenseTitle(determineExpenseTitle(lastMonthExpenses));
+    userRepository.save(user);
   }
 
-  private String determineBudgetTitle(List<Expense> lastMonthExpenses, Budget budget) {
-    double totalExpense = lastMonthExpenses.stream().mapToDouble(Expense::getAmount).sum();
+  private String determineBudgetTitle(int totalSpent, int budget) {
 
-    double budgetLimit = budget.getAmount();
-    double budgetUsageRate = totalExpense / budgetLimit;
+    if (budget == 0) {
+      return null;
+    }
 
-    if (totalExpense == 0) {
+    double budgetUsageRate = (double) totalSpent / budget;
+
+    if (budgetUsageRate == 0) {
       return "무소유: 이게 가능해?";
     }
     if (budgetUsageRate > 1.0) {
@@ -130,18 +136,21 @@ public class UserService {
     if (budgetUsageRate >= 0.5) {
       return "다음은 너다";
     }
-    if (budgetUsageRate > 0) {
-      return "지갑 속은 안전해";
-    }
-
-    return null;
+    return "지갑 속은 안전해";
   }
 
   private String determineExpenseTitle(List<Expense> lastMonthExpenses) {
-    // 📌 이번 달 소비 횟수 카운트
+    if (lastMonthExpenses.isEmpty()) {
+      return null;
+    }
+
     Map<ExpenseCategory, Long> categoryCount = lastMonthExpenses.stream()
         .collect(Collectors.groupingBy(
-            e -> ExpenseCategory.fromString(e.getCategory()),
+            e -> {
+              ExpenseCategory category = ExpenseCategory.fromString(
+                  e.getCategory().trim());
+              return category != null ? category : ExpenseCategory.ETC; // 매칭 실패 시 기타(ETC)로 처리
+            },
             Collectors.counting()
         ));
 
@@ -149,24 +158,13 @@ public class UserService {
       return "한 우물만 파는 중";
     }
 
-    // 📌 소비 횟수가 많은 카테고리 정렬 (내림차순)
-    List<Map.Entry<ExpenseCategory, Long>> sortedCategories = categoryCount.entrySet().stream()
+    return categoryCount.entrySet().stream()
         .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
-        .toList();
-
-    // 📌 가장 높은 기준 충족하는 칭호 찾기
-    for (Map.Entry<ExpenseCategory, Long> entry : sortedCategories) {
-      ExpenseCategory category = entry.getKey();
-      long count = entry.getValue();
-
-      for (com.walletguardians.walletguardiansapi.domain.user.valueobject.TitleCondition condition : category.getTitles()) {
-        if (count >= condition.getThreshold()) {
-          return condition.getTitle();
-        }
-      }
-    }
-
-    return null;
+        .flatMap(entry -> entry.getKey().getTitles().stream()
+            .filter(condition -> entry.getValue() >= condition.getThreshold())
+            .map(TitleCondition::getTitle))
+        .findFirst()
+        .orElse(null);
   }
 
 }
