@@ -40,7 +40,10 @@ public class User implements Serializable {
   private String password;
 
   @Default
-  private String title = "";
+  private String budgetTitle = null;
+
+  @Default
+  private String expenseTitle = null;
 
   @Default
   @Column(nullable = false, name = "defense")
@@ -91,6 +94,14 @@ public class User implements Serializable {
 
   public void updatePassword(PasswordEncoder passwordEncoder, String newPassword) {
     this.password = passwordEncoder.encode(newPassword);
+  }
+
+  public void updateBudgetTitle(String newTitle) {
+    this.budgetTitle = newTitle;
+  }
+
+  public void updateExpenseTitle(String newTitle) {
+    this.expenseTitle = newTitle;
   }
 
   public void decreaseDefense(int defense) {
