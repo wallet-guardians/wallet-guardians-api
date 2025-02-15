@@ -52,7 +52,33 @@ public class CloudStorageServiceImpl implements CloudStorageService {
 
     private String getFileFormat(MultipartFile pictureFile) {
         String contentType = pictureFile.getContentType();
+        if (contentType == null || !contentType.contains("/")) {
+            return "unknown";
+        }
         return contentType.split("/")[1];
+    }
+
+    @Override
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    @Transactional
+    @Override
+    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType,
+        CustomUserDetails customUserDetails) {
+        validateFile(pictureFile);
+
+        String newFilePath = generateProfileFilePath(pictureFile);
+        String contentType = pictureFile.getContentType();
+
+        uploadToCloudStorage(pictureFile, newFilePath, contentType);
+
+        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + newFilePath, pictureFile.getContentType());
+    }
+
+    private String generateProfileFilePath(MultipartFile pictureFile) {
+        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
     }
 
     @Transactional
@@ -117,19 +143,5 @@ public class CloudStorageServiceImpl implements CloudStorageService {
         }
     }
 
-    @Override
-    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType, CustomUserDetails customUserDetails) {
-        validateFile(pictureFile);
-
-        String filePath = generateProfileFilePath(pictureFile);
-        uploadToCloudStorage(pictureFile, filePath, pictureFile.getContentType());
-
-
-        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + filePath, pictureFile.getContentType());
-    }
-
-    private String generateProfileFilePath(MultipartFile pictureFile) {
-        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
-    }
 
 }

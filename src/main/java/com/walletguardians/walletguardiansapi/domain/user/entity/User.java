@@ -78,7 +78,7 @@ public class User {
   private List<Income> incomes;
 
   @Column(name = "profile_image_url")
-  private String profileImageUrl;
+  private String profileImagePath;
 
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
@@ -101,6 +101,6 @@ public class User {
   }
 
   public void updateProfileImage(String imageUrl) {
-    this.profileImageUrl = imageUrl;
+    this.profileImagePath = imageUrl;
   }
 }
