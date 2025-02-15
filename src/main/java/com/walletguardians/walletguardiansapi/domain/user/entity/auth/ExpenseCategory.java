@@ -1,5 +1,6 @@
 package com.walletguardians.walletguardiansapi.domain.user.entity.auth;
 
+import com.walletguardians.walletguardiansapi.domain.user.valueobject.TitleCondition;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public enum ExpenseCategory {
       new TitleCondition(10, "이건 꼭 사야 해...?"),
       new TitleCondition(5, "어머, 이건 꼭 사야 해")
   )),
-  ENTERTAIMENT("취미/여가", List.of(
+  ENTERTAINMENT("취미/여가", List.of(
       new TitleCondition(20, "도파민 중독 신고 번호는 1..."),
       new TitleCondition(10, "도파민에 숙성 중"),
       new TitleCondition(5, "재밌어. 짜릿해")
@@ -32,12 +33,12 @@ public enum ExpenseCategory {
       new TitleCondition(20, "택시비는 아니죠?")
   ));
 
-  private final String expenseCategory;
-  private final List<TitleCondition>;
+  private final String category;
+  private final List<TitleCondition> titles;
 
   public static ExpenseCategory fromString(String category) {
     return Arrays.stream(values())
-        .filter(c -> c.expenseCategory.equals(category))
+        .filter(c -> c.category.equals(category))
         .findFirst()
         .orElse(null);
   }

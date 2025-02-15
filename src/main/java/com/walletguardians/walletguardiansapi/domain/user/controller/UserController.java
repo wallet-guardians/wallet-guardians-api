@@ -62,4 +62,11 @@ public class UserController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
+  @PatchMapping("/title")
+  public ResponseEntity<BaseResponse<Void>> updateTitle(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails){
+    userService.updateMonthlyTitles(customUserDetails.getUser());
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
+
 }
