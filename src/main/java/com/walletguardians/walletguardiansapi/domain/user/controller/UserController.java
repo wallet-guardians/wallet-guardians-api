@@ -81,4 +81,13 @@ public class UserController {
     String newImageUrl = userService.updateProfilePicture(customUserDetails.getUserId(), file, customUserDetails);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(newImageUrl));
   }
+
+  @DeleteMapping("/profile")
+  public ResponseEntity<BaseResponse<Void>> deleteProfilePicture(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+    userService.deleteProfilePicture(customUserDetails.getUserId(), customUserDetails);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
+  }
+
 }

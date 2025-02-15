@@ -127,4 +127,18 @@ public class UserService {
 
     return fileInfo.getFilePath();
   }
+
+  @Transactional
+  public void deleteProfilePicture(Long userId, CustomUserDetails customUserDetails) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID));
+
+    if (user.getProfileImagePath() != null) {
+      String oldImagePath = user.getProfileImagePath().replace("https://storage.googleapis.com/" + cloudStorageService.getBucketName() + "/", "");
+      cloudStorageService.deletePicture(oldImagePath, "profile-pictures", customUserDetails.getUsername());
+    }
+
+    user.updateProfileImage(null);
+    userRepository.save(user);
+  }
 }

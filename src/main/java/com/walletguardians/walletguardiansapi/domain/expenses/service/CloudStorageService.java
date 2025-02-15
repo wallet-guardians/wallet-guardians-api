@@ -15,6 +15,8 @@ public interface CloudStorageService {
 
     void deletePicture(String pictureName, String pictureType, String email);
 
+    void deleteProfilePicture(String filePath);
+
     String getBucketName();
 
 }
