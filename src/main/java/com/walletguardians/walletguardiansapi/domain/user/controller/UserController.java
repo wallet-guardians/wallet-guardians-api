@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -68,7 +69,6 @@ public class UserController {
   public ResponseEntity<BaseResponse<String>> uploadProfilePicture(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestPart("file") MultipartFile file) {
-
     String imageUrl = userService.uploadProfilePicture(customUserDetails.getUserId(), file, customUserDetails);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(imageUrl));
   }
@@ -89,5 +89,4 @@ public class UserController {
     userService.deleteProfilePicture(customUserDetails.getUserId(), customUserDetails);
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
-
 }

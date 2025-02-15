@@ -13,6 +13,8 @@ public interface CloudStorageService {
     FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType,
         CustomUserDetails customUserDetails);
 
+    FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType, CustomUserDetails customUserDetails);
+
     void deletePicture(String pictureName, String pictureType, String email);
 
     void deleteProfilePicture(String filePath);

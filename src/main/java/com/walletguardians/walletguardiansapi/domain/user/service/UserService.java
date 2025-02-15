@@ -109,7 +109,7 @@ public class UserService {
 
     return fileInfo.getFilePath();
   }
-
+  
   @Transactional
   public String updateProfilePicture(Long userId, MultipartFile file, CustomUserDetails customUserDetails) {
     User user = userRepository.findById(userId)

@@ -80,6 +80,7 @@ public class User {
   @Column(name = "profile_image_url")
   private String profileImagePath;
 
+
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }
