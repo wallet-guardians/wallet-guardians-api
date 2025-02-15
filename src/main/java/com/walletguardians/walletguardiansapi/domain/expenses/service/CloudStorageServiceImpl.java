@@ -65,23 +65,6 @@ public class CloudStorageServiceImpl implements CloudStorageService {
 
     @Transactional
     @Override
-    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType,
-        CustomUserDetails customUserDetails) {
-        validateFile(pictureFile);
-
-        String newFilePath = generateProfileFilePath(pictureFile);
-        String contentType = pictureFile.getContentType();
-        uploadToCloudStorage(pictureFile, newFilePath, contentType);
-
-        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + newFilePath, pictureFile.getContentType());
-    }
-
-    private String generateProfileFilePath(MultipartFile pictureFile) {
-        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
-    }
-
-    @Transactional
-    @Override
     public void deletePicture(String pictureName, String pictureType, String email) {
         String filePath = email + "/" + pictureType + "/" + pictureName;
         BlobId blobId = BlobId.of(bucketName, filePath);
