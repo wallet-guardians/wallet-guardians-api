@@ -65,20 +65,28 @@ public class UserController {
     return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 
-  @PutMapping("/profile")
+  @PostMapping("/profile")
   public ResponseEntity<BaseResponse<String>> uploadProfilePicture(
       @AuthenticationPrincipal CustomUserDetails customUserDetails,
       @RequestPart("file") MultipartFile file) {
-
     String imageUrl = userService.uploadProfilePicture(customUserDetails.getUserId(), file, customUserDetails);
     return ResponseEntity.ok(baseResponseService.getSuccessResponse(imageUrl));
   }
 
-  @GetMapping("/me")
-  public ResponseEntity<BaseResponse<User>> getUserProfile(
+  @PatchMapping("/profile")
+  public ResponseEntity<BaseResponse<String>> updateProfilePicture(
+      @AuthenticationPrincipal CustomUserDetails customUserDetails,
+      @RequestPart("file") MultipartFile file) {
+
+    String newImageUrl = userService.updateProfilePicture(customUserDetails.getUserId(), file, customUserDetails);
+    return ResponseEntity.ok(baseResponseService.getSuccessResponse(newImageUrl));
+  }
+
+  @DeleteMapping("/profile")
+  public ResponseEntity<BaseResponse<Void>> deleteProfilePicture(
       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-    User user = userService.findUserByUserId(customUserDetails.getUserId());
-    return ResponseEntity.ok(baseResponseService.getSuccessResponse(user));
+    userService.deleteProfilePicture(customUserDetails.getUserId(), customUserDetails);
+    return ResponseEntity.ok().body(baseResponseService.getSuccessResponse());
   }
 }

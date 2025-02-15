@@ -109,5 +109,36 @@ public class UserService {
 
     return fileInfo.getFilePath();
   }
+  
+  @Transactional
+  public String updateProfilePicture(Long userId, MultipartFile file, CustomUserDetails customUserDetails) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID));
 
+    if (user.getProfileImagePath() != null) {
+      String bucketName = cloudStorageService.getBucketName();
+      String oldImagePath = user.getProfileImagePath().replace("https://storage.googleapis.com/" + bucketName + "/", "");
+      cloudStorageService.deletePicture(oldImagePath, "profile-pictures", user.getEmail());
+    }
+
+    FileInfo fileInfo = cloudStorageService.uploadProfilePicture(file, "profile-pictures", customUserDetails);
+    user.updateProfileImage(fileInfo.getFilePath());
+    userRepository.save(user);
+
+    return fileInfo.getFilePath();
+  }
+
+  @Transactional
+  public void deleteProfilePicture(Long userId, CustomUserDetails customUserDetails) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_MEMBER_ID));
+
+    if (user.getProfileImagePath() != null) {
+      String oldImagePath = user.getProfileImagePath().replace("https://storage.googleapis.com/" + cloudStorageService.getBucketName() + "/", "");
+      cloudStorageService.deletePicture(oldImagePath, "profile-pictures", customUserDetails.getUsername());
+    }
+
+    user.updateProfileImage(null);
+    userRepository.save(user);
+  }
 }
