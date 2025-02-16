@@ -9,6 +9,7 @@ import com.walletguardians.walletguardiansapi.domain.user.repository.UserReposit
 import com.walletguardians.walletguardiansapi.global.security.CustomUserDetails;
 import com.walletguardians.walletguardiansapi.global.exception.BaseException;
 import com.walletguardians.walletguardiansapi.global.response.BaseResponseStatus;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +40,10 @@ public class BudgetService {
   @Transactional
   public void updateBudget(CustomUserDetails customUserDetails,
       UpdateBudgetRequest updateBudgetRequest) {
+    LocalDate now = LocalDate.now();
     Budget budget = budgetRepository.findByUser(customUserDetails.getUser())
         .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_BUDGET));
-    budget.updateBudget(updateBudgetRequest.getAmount());
+    budget.updateBudget(now, updateBudgetRequest.getAmount());
   }
 
   @Transactional

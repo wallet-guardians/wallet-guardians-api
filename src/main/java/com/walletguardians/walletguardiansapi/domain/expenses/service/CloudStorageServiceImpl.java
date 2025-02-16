@@ -35,7 +35,7 @@ public class CloudStorageServiceImpl implements CloudStorageService {
     @Transactional
     @Override
     public FileInfo uploadPicture(MultipartFile pictureFile, String pictureType,
-            CreateReceiptRequest dto, CustomUserDetails customUserDetails) {
+        CreateReceiptRequest dto, CustomUserDetails customUserDetails) {
         validateFile(pictureFile);
 
         String filePath = generateFilePath(pictureFile, pictureType, dto, customUserDetails);
@@ -52,7 +52,32 @@ public class CloudStorageServiceImpl implements CloudStorageService {
 
     private String getFileFormat(MultipartFile pictureFile) {
         String contentType = pictureFile.getContentType();
+        if (contentType == null || !contentType.contains("/")) {
+            return "unknown";
+        }
         return contentType.split("/")[1];
+    }
+
+    @Override
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    @Transactional
+    @Override
+    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType,
+        CustomUserDetails customUserDetails) {
+        validateFile(pictureFile);
+
+        String newFilePath = generateProfileFilePath(pictureFile);
+        String contentType = pictureFile.getContentType();
+        uploadToCloudStorage(pictureFile, newFilePath, contentType);
+
+        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + newFilePath, pictureFile.getContentType());
+    }
+
+    private String generateProfileFilePath(MultipartFile pictureFile) {
+        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
     }
 
     @Transactional
@@ -61,9 +86,27 @@ public class CloudStorageServiceImpl implements CloudStorageService {
         String filePath = email + "/" + pictureType + "/" + pictureName;
         BlobId blobId = BlobId.of(bucketName, filePath);
         try {
-            storage.delete(blobId);
+            boolean deleted = storage.delete(blobId);
+            if (!deleted) {
+                log.warn("Failed to delete file from GCS: {}", filePath);
+            }
         } catch (Exception e) {
-            log.error("Failed to delete receipt for user {}: {}", email, e.getMessage(), e);
+            log.error("Failed to delete file for user {}: {}", email, e.getMessage(), e);
+            throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteProfilePicture(String filePath) {
+        BlobId blobId = BlobId.of(bucketName, filePath);
+        try {
+            boolean deleted = storage.delete(blobId);
+            if (!deleted) {
+                log.warn("Failed to delete profile picture from GCS: {}", filePath);
+            }
+        } catch (Exception e) {
+            log.error("Failed to delete profile picture: {}", e.getMessage(), e);
             throw new BaseException(BaseResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -71,9 +114,8 @@ public class CloudStorageServiceImpl implements CloudStorageService {
     private void uploadToCloudStorage(MultipartFile file, String filePath, String contentType) {
         BlobId blobId = BlobId.of(bucketName, filePath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
-                .setContentType(contentType)
-                .build();
-
+            .setContentType(contentType)
+            .build();
         try (WriteChannel writer = storage.writer(blobInfo)) {
             writer.write(ByteBuffer.wrap(file.getBytes()));
         } catch (Exception e) {
@@ -85,18 +127,15 @@ public class CloudStorageServiceImpl implements CloudStorageService {
     private void replaceReceiptMetadata(String receiptPath, CreateReceiptRequest dto) {
         BlobId blobId = BlobId.of(bucketName, receiptPath);
         Blob blob = storage.get(blobId);
-
         if (blob == null) {
             throw new IllegalArgumentException("Storage에서 파일을 찾을 수 없음: " + receiptPath);
         }
-
         BlobInfo updatedBlobInfo = blob.toBuilder()
-                .setMetadata(Map.of(
-                        "category", dto.getCategory(),
-                        "description", dto.getDescription()
-                ))
-                .build();
-
+            .setMetadata(Map.of(
+                "category", dto.getCategory(),
+                "description", dto.getDescription()
+            ))
+            .build();
         storage.update(updatedBlobInfo);
     }
 
@@ -105,7 +144,7 @@ public class CloudStorageServiceImpl implements CloudStorageService {
     }
 
     private String generateFilePath(MultipartFile pictureFile, String pictureType,
-            CreateReceiptRequest dto, CustomUserDetails customUserDetails) {
+        CreateReceiptRequest dto, CustomUserDetails customUserDetails) {
         String userEmail = customUserDetails.getUsername();
         String uniqueFileName = UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
         return userEmail + "/" + pictureType + "/" + dto.getDate() + "/" + uniqueFileName;
@@ -116,4 +155,20 @@ public class CloudStorageServiceImpl implements CloudStorageService {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
         }
     }
+
+    @Override
+    public FileInfo uploadProfilePicture(MultipartFile pictureFile, String pictureType, CustomUserDetails customUserDetails) {
+        validateFile(pictureFile);
+
+        String filePath = generateProfileFilePath(pictureFile);
+        uploadToCloudStorage(pictureFile, filePath, pictureFile.getContentType());
+
+
+        return FileInfo.of("https://storage.googleapis.com/" + bucketName + "/" + filePath, pictureFile.getContentType());
+    }
+
+    private String generateProfileFilePath(MultipartFile pictureFile) {
+        return "profile-pictures/" + UUID.randomUUID() + "_" + pictureFile.getOriginalFilename();
+    }
+
 }

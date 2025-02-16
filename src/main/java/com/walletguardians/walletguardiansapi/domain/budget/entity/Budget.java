@@ -43,7 +43,8 @@ public class Budget implements Serializable {
   @JoinColumn(name = "user_id", nullable = false, unique = true)
   private User user;
 
-  public void updateBudget(int newAmount){
+  public void updateBudget(LocalDate newDate,int newAmount){
+    this.date = newDate;
     this.amount = newAmount;
   }
 

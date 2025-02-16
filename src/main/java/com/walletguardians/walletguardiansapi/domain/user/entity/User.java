@@ -40,7 +40,10 @@ public class User implements Serializable {
   private String password;
 
   @Default
-  private String title = "";
+  private String budgetTitle = null;
+
+  @Default
+  private String expenseTitle = null;
 
   @Default
   @Column(nullable = false, name = "defense")
@@ -77,6 +80,10 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Income> incomes;
 
+  @Column(name = "profile_image_url")
+  private String profileImagePath;
+
+
   public void encodePassword(PasswordEncoder passwordEncoder) {
     this.password = passwordEncoder.encode(password);
   }
@@ -89,11 +96,23 @@ public class User implements Serializable {
     this.password = passwordEncoder.encode(newPassword);
   }
 
+  public void updateBudgetTitle(String newTitle) {
+    this.budgetTitle = newTitle;
+  }
+
+  public void updateExpenseTitle(String newTitle) {
+    this.expenseTitle = newTitle;
+  }
+
   public void decreaseDefense(int defense) {
     this.defense -= defense;
   }
 
   public void increaseDefense(int defense) {
     this.defense += defense;
+  }
+
+  public void updateProfileImage(String imageUrl) {
+    this.profileImagePath = imageUrl;
   }
 }
