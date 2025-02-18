@@ -1,13 +1,20 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/lively-marking-448507-f6/wallet_guardians', '.']
+    args: ['build', '-t', 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA', '.']
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/lively-marking-448507-f6/wallet_guardians']
+    args: ['push', 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA']
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', 'wallet-guardians-api', '--image', 'gcr.io/lively-marking-448507-f6/wallet_guardians', '--region', 'us-central1']
+    args:
+      - 'run'
+      - 'deploy'
+      - 'wallet-guardians-api'
+      - '--image'
+      - 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
 images:
-  - gcr.io/lively-marking-448507-f6/wallet_guardians
+  - 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA'
