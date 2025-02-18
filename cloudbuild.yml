@@ -1,18 +1,10 @@
 steps:
-  # 1. Gradle을 사용해 JAR 빌드
-  - name: 'gcr.io/cloud-builders/gradle'
-    args: ['build']
-    dir: '.'
-
-  # 2. Docker 이미지 빌드
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA', '.']
 
-  # 3. Docker 이미지 푸시
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA']
 
-  # 4. Cloud Run 배포
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -23,6 +15,5 @@ steps:
       - 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA'
       - '--region'
       - 'us-central1'
-
 images:
   - 'gcr.io/lively-marking-448507-f6/wallet-guardians-api:$COMMIT_SHA'
